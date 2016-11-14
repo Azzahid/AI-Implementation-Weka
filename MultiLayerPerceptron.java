@@ -177,7 +177,7 @@ public class MultiLayerPerceptron extends AbstractClassifier {
             //backpropagation UNDER CONSTRUCTION
         } while(error > valThres);
         //cetak hasilnya yaitu bobot-bobot yang ada pada tiap neuron
-        printWeight(outNode, "hidden");
+        printWeight(hidNode, "hidden");
         printWeight(outNode, "output");
     }
     
