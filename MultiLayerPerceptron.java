@@ -206,8 +206,7 @@ public class MultiLayerPerceptron extends AbstractClassifier {
                 insNumeric[j][i + 1] = numeric[j];
             }
         }
-        //setelah AF, jika > 0.5 maka jadi 1, otherwise 0
-        //setiap row punya jawaban sebenarnya (supervised) yaitu tuple 1&0 sebanyak jenis kelasnya
+        //setiap row punya jawaban sebenarnya (target) yaitu tuple 1 & 0 sebanyak jenis kelasnya
         int[][] target = new int[nRow][nOutput];
         if (nOutput == 2) { //jenis kelas cuma ada 2 (misal: boolean TRUE/FALSE), cukup 1 neuron output
             nOutput = 1;
