@@ -25,19 +25,20 @@ import weka.filters.Filter;
 
 public class MultiLayerPerceptron extends AbstractClassifier {
     //nilai default valThres, learnRate, nHidden
-    private double valThres = 0.5;
+    private double valThres = 0.001;
     private double learnRate = 0.1;
     private int nCol; //jumlah atribut = jumlah data + bias
-    private int nRow;
-    private int nHidden = 0;
-    private int nOutput;
-    private Node[] outNode;
-    private Node[] hidNode;
+    private int nRow; //jumlah data set
+    private int nHidden = 2; //jumlah neuron pada layer hidden
+    private int nOutput; //jumlah neuron pada layer output
+    private Node[] hidNode; //neuron pada layer hidden
+    private Node[] outNode; //neuron pada layer output
     
     class Node {
+        private double output; //nilai setelah keluar dari AF
+        private double error;
+        private final int nInput; //jumlah input yang masuk
         private final double[] weight;
-        private double output;
-        private final int nInput;
         
         public Node(int nInput) {
             //tiap neuron punya bobot sebanyak inputnya (sudah termasuk bias)
@@ -60,7 +61,7 @@ public class MultiLayerPerceptron extends AbstractClassifier {
             return 1 / (1 + Math.pow(Math.E, -x)); //sigmoid function
         }
         
-        public double count(double[] input) {
+        public double countOutput(double[] input) {
             //hitung sigma x dikali w
             double sigma = 0;
             for (int i = 0; i < nInput; i++) {
@@ -71,22 +72,38 @@ public class MultiLayerPerceptron extends AbstractClassifier {
             return output;
         }
         
-        public void updateWeightOutput(double[] input, int target, int sign) {
+        public void countErrSingle(int target, int sign) {
             //ATTENTION: perihal nilai sign (0 atau 1)
             //misal <o1, o2, o3> = <0.6, 0.2, 0.8>
             //jika di-"step" disini maka <s1,s2,s3> = <1,0,1>
             //    (bisa melanggar aturan, seharusnya hanya boleh ada satu angka 1)
             //jika di-"step" diluar maka <s1,s2,s3> = <0,0,1>
             //    (pasti hanya ada satu angka 1 yaitu yang nilai o terbesar)
-            //namun setelah beberapa eksperimen, lebih baik di-"step" disini
-            sign = output > 0.5 ? 1 : 0; //hapus baris ini kalo mau "step"-an dari luar
+            //sign = output > 0.5 ? 1 : 0; //hapus baris ini kalo mau "step"-an dari luar
+            error = target - sign;
+        }
+        
+        public void countErrOut(double target) {
+            error = output * (1 - output) * (target - output);
+        }
+        
+        public void countErrHid(double sum) {
+            error = output * (1 - output) * sum;
+        }
+        
+        public void updateWeight(double[] input) {
+            //semua input bobotnya diatur ulang
             for (int i = 0; i < nInput; i++) {
-                weight[i] += (learnRate * (target - sign) * input[i]);
+                weight[i] += (learnRate * error * input[i]);
             }
         }
         
         public double[] getWeight() {
             return weight;
+        }
+        
+        public double getError() {
+            return error;
         }
     }
     
@@ -114,13 +131,12 @@ public class MultiLayerPerceptron extends AbstractClassifier {
         do {
             iterasi++;
             error = 0;
-            Arrays.fill(sign, 0);
             //satu kali iterasi = hitung seluruh row
             for (int i = 0; i < nRow; i++) {
                 //menghitung sign untuk setiap neuron output
-                //proses menghitung sign nya di dalam prosedur Node.count()
+                //proses menghitung sign nya di dalam prosedur Node.countOutput()
                 for (int j = 0; j < nOutput; j++) {
-                    sign[j] = outNode[j].count(insNumeric[i]);
+                    sign[j] = outNode[j].countOutput(insNumeric[i]);
                 }
                 //dari semua neuron output, cari nilai sign yang paling besar
                 int idxMax = 0;
@@ -136,23 +152,23 @@ public class MultiLayerPerceptron extends AbstractClassifier {
                     Arrays.fill(sign, 0);
                     sign[idxMax] = 1;
                 }
-                //kumulatif half square error
+                boolean masihBenar = true;
                 for (int j = 0; j < nOutput; j++) {
-                    //ada neuron yang beda dari jawaban sebenarnya maka dianggap error
-                    if ((int) sign[j] != target[i][j]) {
-                        error += (Math.pow((sign[j] - target[i][j]), 2) / 2);
-                        break; //tidak perlu cek neuron lainnya
+                    //update bobot untuk setiap neuron
+                    outNode[j].countErrSingle(target[i][j], (int) sign[j]);
+                    outNode[j].updateWeight(insNumeric[i]);
+                    //kumulatif half square error
+                    double err = outNode[j].getError();
+                    if ((int) err != 0 && masihBenar) { //target - sign != 0
+                        error += (Math.pow(err, 2) / 2);
+                        masihBenar = false; //tidak perlu cek neuron lainnya
                     }
-                }
-                //update bobot untuk setiap neuron
-                for (int j = 0; j < nOutput; j++) {
-                    outNode[j].updateWeightOutput(insNumeric[i], target[i][j], (int) sign[j]);
                 }
                 //satu row selesai
             }
             //satu iterasi selesai
-            System.out.println("Iterasi " + iterasi + " Error " + error);
-        } while(error > valThres);
+            System.out.printf("Iterasi %d error %.2f\n", iterasi, error);
+        } while(error > valThres && iterasi < 10000);
         //cetak hasilnya yaitu bobot-bobot yang ada pada tiap neuron output
         printWeight(outNode, "output");
     }
@@ -170,12 +186,49 @@ public class MultiLayerPerceptron extends AbstractClassifier {
         }
         int iterasi = 0;
         double error;
+        double[] signHid = new double[nHidden]; //output dari layer hidden sebagai input layer output
         do {
             iterasi++;
             error = 0;
-            //hitung UNDER CONSTRUCTION
-            //backpropagation UNDER CONSTRUCTION
-        } while(error > valThres);
+            //satu kali iterasi = hitung seluruh row
+            for (int i = 0; i < nRow; i++) {
+                //menghitung sign untuk setiap neuron hidden
+                //proses menghitung sign nya di dalam prosedur Node.countOutput()
+                for (int j = 0; j < nHidden; j++) {
+                    signHid[j] = hidNode[j].countOutput(insNumeric[i]);
+                }
+                //menghitung sign dan error untuk setiap neuron output
+                //proses menghitung sign nya di dalam prosedur Node.countOutput()
+                //proses menghitung error nya di dalam prosedur Node.countErrOut()
+                for (int j = 0; j < nOutput; j++) {
+                    outNode[j].countOutput(signHid);
+                    outNode[j].countErrOut(target[i][j]);
+                }
+                //hitung error hidden layer
+                for (int j = 0; j < nHidden; j++) {
+                    //jumlahin error x weight
+                    double sumErrXW = 0;
+                    for (Node n : outNode) {
+                        sumErrXW += (n.getError() * n.getWeight()[j]);
+                    }
+                    hidNode[j].countErrHid(sumErrXW);
+                }
+                //update bobot untuk setiap neuron output
+                for (Node n : outNode) {
+                    n.updateWeight(signHid);
+                }
+                //update bobot untuk setiap neuron hidden
+                for (Node n : hidNode) {
+                    n.updateWeight(insNumeric[i]);
+                }
+                //satu row selesai
+            }
+            //satu iterasi selesai
+            for (Node n : outNode) { //ini ngarang, jumlahin semua error supaya bisa iterasi lagi
+                error += n.getError();
+            }
+            System.out.printf("Iterasi %d error %.2f\n", iterasi, error);
+        } while((error > valThres || error < -valThres) && iterasi < 5000);
         //cetak hasilnya yaitu bobot-bobot yang ada pada tiap neuron
         printWeight(hidNode, "hidden");
         printWeight(outNode, "output");
@@ -232,11 +285,14 @@ public class MultiLayerPerceptron extends AbstractClassifier {
         Instances i = new DataSource("iris.arff").getDataSet();
         i.setClassIndex(i.numAttributes() - 1); //kelas = atribut terakhir
         MultiLayerPerceptron mlp = new MultiLayerPerceptron();
-        /* ATTENTION: ini sementara di komantarin dulu, pake nilai-nilai default aja */
-        //System.out.print("Masukkan jumlah neuron pada hidden layer: ");
-        //mlp.setHiddenLayers(new Scanner(System.in).nextInt());
-        //mlp.setLearningRate(0.1);
-        //mlp.setValidationThreshold(0.5);
+        /* ATTENTION: sementara ini di jadiin komentar, pake nilai default dulu
+        Scanner s = new Scanner(System.in);
+        System.out.print("Masukkan jumlah neuron pada hidden layer: ");
+        mlp.setHiddenLayers(s.nextInt());
+        System.out.print("Masukkan konstanta learning rate        : ");
+        mlp.setLearningRate(s.nextDouble());
+        System.out.print("Masukkan konstanta validation threshold : ");
+        mlp.setValidationThreshold(s.nextDouble());*/
         mlp.buildClassifier(i);
     }
 }
