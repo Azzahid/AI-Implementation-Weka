@@ -38,7 +38,7 @@ public class MultiLayerPerceptron extends AbstractClassifier {
         nHidden = h;
     }
     
-    private void singlePerceptron(double[][] insNumeric, int[][] target) {
+    private void singleLayer(double[][] insNumeric, int[][] target) {
         //neuron-neuron di layer output
         outNode = new Node[nOutput];
         for (int i = 0; i < nOutput; i++) {
@@ -56,7 +56,7 @@ public class MultiLayerPerceptron extends AbstractClassifier {
                 int idxMax = 0; //nilai sign yang paling besar
                 for (int j = 0; j < nOutput; j++) {
                     outNode[j].countOutput(insNumeric[i]);
-                    sign[j] = outNode[j].getOutput(); //penjelasan ada di dalam prosedurnya
+                    sign[j] = outNode[j].getOutput();
                     if (sign[j] > sign[idxMax]) {
                         idxMax = j;
                     }
@@ -80,16 +80,14 @@ public class MultiLayerPerceptron extends AbstractClassifier {
                         masihBenar = false; //tidak perlu cek neuron lainnya
                     }
                 }
-                //satu row selesai
             }
-            //satu iterasi selesai
+            System.out.printf("Iterasi %d error %.3f\n", iterasi, error);
         } while(error > valThres && iterasi < 10000);
         //cetak hasilnya yaitu bobot-bobot yang ada pada tiap neuron output
-        System.out.printf("Iterasi %d error %.3f\n", iterasi, error);
-        printModel();
+        printWeight();
     }
     
-    private void singleHiddenLayer(double[][] insNumeric, int[][] target) {
+    private void dualLayer(double[][] insNumeric, int[][] target) {
         //neuron-neuron di layer hidden
         hidNode = new Node[nHidden];
         for (int i = 0; i < nHidden; i++) {
@@ -111,13 +109,13 @@ public class MultiLayerPerceptron extends AbstractClassifier {
             for (int i = 0; i < nRow; i++) {
                 //menghitung sign untuk setiap neuron hidden
                 for (int j = 0; j < nHidden; j++) {
-                    hidNode[j].countOutput(insNumeric[i]); //penjelasan ada di dalam prosedurnya
+                    hidNode[j].countOutput(insNumeric[i]);
                     signHid[j + 1] = hidNode[j].getOutput();
                 }
                 //menghitung sign dan error untuk setiap neuron output
                 for (int j = 0; j < nOutput; j++) {
-                    outNode[j].countOutput(signHid); //penjelasan ada di dalam prosedurnya
-                    outNode[j].countErrOut(target[i][j]); //penjelasan ada di dalam prosedurnya
+                    outNode[j].countOutput(signHid);
+                    outNode[j].countErrOut(target[i][j]);
                 }
                 //menghitung error untuk setiap neuron hidden
                 for (int j = 0; j < nHidden; j++) {
@@ -143,17 +141,102 @@ public class MultiLayerPerceptron extends AbstractClassifier {
             for (Node n : outNode) { //ini ngarang, jumlahin semua error supaya bisa iterasi lagi
                 error += n.getError();
             }
+            System.out.printf("Iterasi %d error %.3f\n", iterasi, error);
         } while((error > valThres || error < -valThres) && iterasi < 5000);
         //cetak hasilnya yaitu bobot-bobot yang ada pada tiap neuron
-        System.out.printf("Iterasi %d error %.3f\n", iterasi, error);
-        printModel();
+        printWeight();
     }
     
-    private void printModel() {
+    private double[][] whateverToNumeric(Instances ins) {
+        //filter menjadi numeric semua
+        double[][] insNumeric = new double [nRow][nCol + 1]; //kolom +1 untuk bias
+        for (int i = 0; i < nCol; i++) {
+            double[] numeric = ins.attributeToDoubleArray(i);
+            for (int j = 0; j < nRow; j++) {
+                insNumeric[j][0] = 1; //bias ada di kolom pertama
+                insNumeric[j][i + 1] = numeric[j];
+            }
+        }
+        return insNumeric;
+    }
+    
+    private int[][] buildTarget(double[][] insNumeric) {
+        //setiap row punya jawaban sebenarnya (target) yaitu tuple 1 & 0 sebanyak jenis kelasnya
+        int[][] target = new int[nRow][nOutput];
+        if (nOutput == 1) { //jenis kelas boolean
+            for (int i = 0; i < nRow; i++) {
+                target[i][0] = (int) insNumeric[i][nCol];
+            }
+        } else {
+            for (int i = 0; i < nRow; i++) {
+                //dalam setiap row hanya ada satu angka 1, sisanya angka 0
+                Arrays.fill(target[i], 0);
+                target[i][(int) insNumeric[i][nCol]] = 1;
+            }
+        }
+        return target;
+    }
+    
+    @Override
+    public double classifyInstance(Instance ins) throws Exception {
+        //whateverToNumeric
+        double[] insNumeric = new double[nCol + 1];
+        insNumeric[0] = 1;
+        for (int i = 0; i < nCol; i++) {
+            insNumeric[i + 1] = ins.value(i);
+        }
+        double[] input = insNumeric;
+        if (nHidden > 0) {
+            //output dari layer hidden sebagai input layer output
+            double[] signHid = new double[nHidden + 1];
+            signHid[0] = 1; //+1 untuk bias yang ada di kolom pertama
+            //menghitung sign untuk setiap neuron hidden
+            for (int j = 0; j < nHidden; j++) { //single perceptron gabakal masuk sini
+                hidNode[j].countOutput(insNumeric);
+                signHid[j + 1] = hidNode[j].getOutput();
+            }
+            input = signHid;
+        }
+        //menghitung sign untuk setiap neuron output
+        int idxMax = 0; //nilai sign yang paling besar
+        double signOut = -1; //paling kecil karena gak mungkin ada sign negatif
+        //hasil setelah AF lalu dijadikan 0 atau 1
+        int j = 0;
+        do {
+            outNode[j].countOutput(input);
+            double newSign = outNode[j].getOutput();
+            if (newSign > signOut) {
+                idxMax = j;
+                signOut = newSign;
+            }
+            j++;
+        } while(j < nOutput);
+        //ubah nilai sign menjadi 0 atau 1 (di-"step"-in)
+        if (nOutput == 1) { //kelas boolean masuk sini
+            return signOut > 0.5 ? 1 : 0;
+        } else {
+            return idxMax;
+        }
+    }
+    
+    @Override
+    public void buildClassifier(Instances ins) throws Exception {
+        nCol = ins.numAttributes();
+        nRow = ins.numInstances();
+        nOutput = ins.classAttribute().numValues();
+        nOutput = nOutput == 2 ? 1 : nOutput; //jenis kelas boolean cukup 1 neuron output
+        double[][] insNumeric = whateverToNumeric(ins);
+        int[][] target = buildTarget(insNumeric);
+        //single / multi perceptron
+        if (nHidden == 0) {
+            singleLayer(insNumeric, target);
+        } else if(nHidden > 0) {
+            dualLayer(insNumeric, target);
+        }
+    }
+    
+    private void printWeight() {
         int input = nCol; //input hidden dan output bisa beda
-        System.out.println("\n=== Classifier model ===");
-        System.out.println("\nFeed Forward Neural Network");
-        System.out.println("---------------------------");
         if (nHidden > 0) {
             System.out.println("\nHidden Layer");
             for (int i = 0; i < nHidden; i++) {
@@ -175,101 +258,6 @@ public class MultiLayerPerceptron extends AbstractClassifier {
             }
             System.out.println();
         }
-        System.out.println("\nValidation Threshold : " + valThres);
-        System.out.println("Learning Rate : " + learnRate);
-        System.out.println("Number of Hidden Neuron : " + nHidden);
-        System.out.println("Number of Output Neuron : " + nOutput);
-    }
-    
-    private double[][] whateverToNumeric(Instances ins) {
-        int kolom = ins.numAttributes();
-        int baris = ins.numInstances();
-        //filter menjadi numeric semua
-        double[][] insNumeric = new double [baris][kolom + 1]; //kolom +1 untuk bias
-        for (int i = 0; i < kolom; i++) {
-            double[] numeric = ins.attributeToDoubleArray(i);
-            for (int j = 0; j < baris; j++) {
-                insNumeric[j][0] = 1; //bias ada di kolom pertama
-                insNumeric[j][i + 1] = numeric[j];
-            }
-        }
-        return insNumeric;
-    }
-    
-    private int[][] buildTarget(double[][] insNumeric, int nOutput) {
-        int baris = insNumeric.length;
-        int kolom = insNumeric[0].length - 1; //-1 karena whateverToNumeric di +1
-        //setiap row punya jawaban sebenarnya (target) yaitu tuple 1 & 0 sebanyak jenis kelasnya
-        int[][] target = new int[baris][nOutput];
-        if (nOutput == 1) { //jenis kelas boolean
-            for (int i = 0; i < baris; i++) {
-                target[i][0] = (int) insNumeric[i][kolom];
-            }
-        } else {
-            for (int i = 0; i < baris; i++) {
-                //dalam setiap row hanya ada satu angka 1, sisanya angka 0
-                Arrays.fill(target[i], 0);
-                target[i][(int) insNumeric[i][kolom]] = 1;
-            }
-        }
-        return target;
-    }
-    
-    @Override
-    public void buildClassifier(Instances ins) throws Exception {
-        nCol = ins.numAttributes();
-        nRow = ins.numInstances();
-        nOutput = ins.classAttribute().numValues();
-        nOutput = nOutput == 2 ? 1 : nOutput; //jenis kelas boolean cukup 1 neuron output
-        double[][] insNumeric = whateverToNumeric(ins);  //penjelasan ada di dalam prosedurnya
-        int[][] target = buildTarget(insNumeric, nOutput); //penjelasan ada di dalam prosedurnya
-        //single / multi perceptron
-        if (nHidden == 0) {
-            singlePerceptron(insNumeric, target);
-        } else if(nHidden > 0) {
-            singleHiddenLayer(insNumeric, target);
-        }
-    }
-    
-    @Override
-    public double classifyInstance(Instance ins) throws Exception {
-        int nKeluaran = ins.classAttribute().numValues();
-        nKeluaran = nKeluaran == 2 ? 1 : nKeluaran; //jenis kelas boolean cukup 1 neuron output
-        //whateverToNumeric
-        double[] insNumeric = new double[nCol + 1];
-        insNumeric[0] = 1;
-        for (int i = 0; i < nCol; i++) {
-            insNumeric[i + 1] = ins.value(i);
-        }
-        //output dari layer hidden sebagai input layer output
-        double[] signHid = new double[nHidden + 1];
-        signHid[0] = 1; //+1 untuk bias yang ada di kolom pertama
-        //menghitung sign untuk setiap neuron hidden
-        for (int j = 0; j < nHidden; j++) { //single perceptron gabakal masuk sini
-            hidNode[j].countOutput(insNumeric); //penjelasan ada di dalam prosedurnya
-            signHid[j + 1] = hidNode[j].getOutput();
-        }
-        //menghitung sign untuk setiap neuron output
-        double[] input = nHidden == 0 ? insNumeric : signHid;
-        int idxMax = 0; //nilai sign yang paling besar
-        double signOut = -1; //paling kecil karena gak mungkin ada sign negatif
-        //hasil setelah AF lalu dijadikan 0 atau 1
-        int j = 0;
-        do {
-            outNode[j].countOutput(input); //penjelasan ada di dalam prosedurnya
-            double newSign = outNode[j].getOutput();
-            if (newSign > signOut) {
-                idxMax = j;
-                signOut = newSign;
-            }
-            j++;
-        } while(j < nKeluaran);
-        //ubah nilai sign menjadi 0 atau 1 (di-"step"-in)
-        if (nKeluaran == 1) { //kelas boolean masuk sini
-            return signOut > 0.5 ? 1 : 0;
-        } else {
-            return idxMax;
-        }
     }
     
     public static void main(String[] args) throws Exception {
@@ -286,6 +274,8 @@ public class MultiLayerPerceptron extends AbstractClassifier {
         mlp.buildClassifier(i);
         Evaluation eval = new Evaluation(i);
         eval.evaluateModel(mlp, i);
+        System.out.println(eval.toClassDetailsString());
         System.out.println(eval.toSummaryString());
+        System.out.println(eval.toMatrixString());
     }
 }
