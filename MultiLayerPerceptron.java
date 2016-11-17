@@ -1,8 +1,17 @@
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.util.Arrays;
+import java.util.Enumeration;
+import java.util.Random;
 import java.util.Scanner;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import weka.classifiers.AbstractClassifier;
 import weka.classifiers.Classifier;
 import weka.classifiers.Evaluation;
+import weka.core.Attribute;
 import weka.core.Instance;
 import weka.core.Instances;
 import weka.core.converters.ConverterUtils.DataSource;
@@ -10,10 +19,9 @@ import weka.filters.Filter;
 import weka.filters.unsupervised.attribute.Normalize;
 
 public class MultiLayerPerceptron extends AbstractClassifier {
-    //nilai default valThres, learnRate, nHidden
-    private double learnRate = 0.1;
-    private double valThres = 0.05;
-    private int nHidden = 2; //jumlah neuron pada layer hidden
+    private double learnRate;
+    private double valThres;
+    private int nHidden; //jumlah neuron pada layer hidden
     private int nOutput; //jumlah neuron pada layer output
     private int nCol; //jumlah atribut = jumlah data + bias
     private int nRow; //jumlah data set
@@ -258,24 +266,64 @@ public class MultiLayerPerceptron extends AbstractClassifier {
             }
             System.out.println();
         }
+        System.out.println();
     }
     
     public static void main(String[] args) throws Exception {
-        Instances i = new DataSource("Team.arff").getDataSet();
-        i.setClassIndex(i.numAttributes() - 1); //kelas = atribut terakhir
-        //normalisasi
+        Scanner s = new Scanner(System.in);
+        //setting file dataset
+        System.out.print("File ARFF name : ");
+        String filename = s.next();
+        Instances i = new DataSource(filename).getDataSet();
+        for (int j = 0; j < i.numAttributes(); j++ ) {
+            System.out.println((j + 1) + ". " + i.attribute(j).name());
+        }
+        System.out.print("Select class index : ");
+        i.setClassIndex(s.nextInt() - 1);
         Normalize filter = new Normalize();
         filter.setInputFormat(i);
         i = Filter.useFilter(i, filter);
-        //train
-        Scanner s = new Scanner(System.in);
-        System.out.print("Learning rate, validation threshold, number of hidden neuron : ");
-        Classifier mlp = new MultiLayerPerceptron(s.nextDouble(), s.nextDouble(), s.nextInt());
-        mlp.buildClassifier(i);
+        //setting classifier
+        Classifier mlp;
+        System.out.println("1. Build model");
+        System.out.println("2. Load model");
+        System.out.print("Choose : ");
+        switch(s.nextInt()) {
+            case 1 :
+                System.out.print("Learning rate, validation threshold, number of hidden neuron : ");
+                mlp = new MultiLayerPerceptron(s.nextDouble(), s.nextDouble(), s.nextInt()); //build model
+                mlp.buildClassifier(i);
+                break;
+            case 2 :
+                System.out.printf("File MODEL name : ");
+                mlp = (Classifier) weka.core.SerializationHelper.read(s.next());
+                break;
+            default :
+                return;
+        }
+        //setting metode testing
+        System.out.println("1. Full training");
+        System.out.println("2. 10-cross-fold validation");
+        System.out.print("Choose : ");
         Evaluation eval = new Evaluation(i);
-        eval.evaluateModel(mlp, i);
-        System.out.println(eval.toClassDetailsString());
-        System.out.println(eval.toSummaryString());
-        System.out.println(eval.toMatrixString());
+        switch(s.nextInt()) {
+            case 1 :
+                eval.evaluateModel(mlp, i);
+                break;
+            case 2 :
+                eval.crossValidateModel(mlp, i, 10, new Random(1));
+                break;
+            default :
+                return;
+        }
+        //output hasil dan save model
+        System.out.println(eval.toSummaryString(true));
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream("ANN_" + filename + ".model"))) {
+            oos.writeObject(mlp);
+            oos.flush();
+            oos.close();
+        } catch (IOException e) {
+            System.out.println(e.toString());
+        }
     }
 }

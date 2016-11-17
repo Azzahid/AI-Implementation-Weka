@@ -1,7 +1,7 @@
-
+import java.io.Serializable;
 import java.util.Arrays;
 
-class Node {
+class Node implements Serializable {
     private double output; //nilai setelah keluar dari AF
     private double error;
     private final int nInput; //jumlah input yang masuk
