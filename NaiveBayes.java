@@ -8,6 +8,7 @@ package NaiveBayes;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
+import java.lang.Integer;
 import weka.classifiers.AbstractClassifier;
 import weka.core.Attribute;
 import weka.core.Capabilities.Capability;
@@ -24,9 +25,10 @@ import weka.filters.unsupervised.attribute.NumericToNominal;
  */
 public class NaiveBayes extends AbstractClassifier{
 
-    private List<List<List<Double>>> value;
-    private List<List<List<Integer>>> Model;
-    
+    private List<List<Double>> value;
+    private List<List<List<Double>>> Model;
+    private List<Double> Class;
+    private Double totalInstances;
     
     @Override
     public void buildClassifier(Instances ins) throws Exception {
@@ -38,42 +40,85 @@ public class NaiveBayes extends AbstractClassifier{
         }else{
             value =  new ArrayList<>();
             Model = new ArrayList<>();
-            for(int i=0; i<ins.numClasses(); i++){
-                value.add(new ArrayList<List<Double>>());
-                Model.add(new ArrayList<List<Integer>>());
-                for(int j=0; j<ins.numAttributes()-1;j++){
-                    int l = 0;
-                    int k = 0;
-                    value.get(i).add(new ArrayList<Double>());
-                    Model.get(i).add(new ArrayList<Integer>());
-                    while(k < ins.numInstances()){
-                        boolean x = false;
-                        if(value.get(i).get(j).isEmpty()){
-                            this.value.get(i).get(j).add(l, ins.get(k).value(j));
-                            this.Model.get(i).get(j).add(l, 1);
-                            l++;
-                        }else{
-                            //System.out.println(value.get(i).get(j).size());
-                            for(int m =0;m<value.get(i).get(j).size();m++){
-                                if(ins.get(k).value(j)==this.value.get(i).get(j).get(m)){
-                                    if(ins.get(k).classValue()==new Double(i)){
-                                        Model.get(i).get(j).set(m, Model.get(i).get(j).get(m)+1);
-                                    }  
-                                    x = true;
-                                }
-                            }
-                            if(!x){
-                                this.value.get(i).get(j).add(l, ins.get(k).value(j));
-                                this.Model.get(i).get(j).add(l, 1);
-                                l++;
+            
+            for(int j=0; j<ins.numAttributes()-1;j++){
+                value.add(new ArrayList<>());
+                Model.add(new ArrayList<List<Double>>());
+                int l = 0;
+                for(int k=0;k<ins.numInstances();k++ ){
+                    int classval=(int) ins.get(k).classValue();
+                    boolean x = false;
+                    if(value.get(j).isEmpty()){
+                        this.value.get(j).add(l, ins.get(k).value(j));
+                        this.Model.get(j).add(l, new ArrayList<Double>());
+                        for(int i =0; i<ins.numClasses();i++){
+                            this.Model.get(j).get(l).add(new Double(i));
+                        }
+                        l++;
+                    }else{
+                        //System.out.println(value.get(i).get(j).size());
+                        for(int m =0;m<value.get(j).size();m++){
+                            if(ins.get(k).value(j)==this.value.get(j).get(m)){
+                                Model.get(j).get(m).set(classval, Model.get(j).get(m).get(classval)+1.0);
+                                x = true;
                             }
                         }
-                        k++;
+                        if(!x){
+                            this.value.get(j).add(l, ins.get(k).value(j));
+                            this.Model.get(j).add(l, new ArrayList<Double>());
+                            for(int i =0; i<ins.numClasses();i++){
+                                this.Model.get(j).get(l).add(new Double(i));
+                            }
+                            l++;
+                        }
                     }
+                    
                 }
             }
         }
-        System.out.println("fish");
+        getClassTotalInstances(ins);
+        totalInstances = new Double(ins.numInstances());
+        //System.out.println("fish");
+    }
+    
+    private void getClassTotalInstances(Instances ins){
+        Class = new ArrayList<>();
+        for(int i=0;i<ins.numClasses();i++){
+            Class.add(i,0.0);
+        }
+        for(int i=0;i<ins.numInstances();i++){
+            int classval = (int)ins.get(i).classValue();
+            Class.set(classval, Class.get(classval)+1.0);
+        }
+    }
+    
+    @Override
+    public double classifyInstance(Instance ins) throws Exception {
+        double result = 0.0;
+        Double classins[] = new Double[ins.numClasses()];
+        for(int i =0; i<ins.numClasses();i++){
+            classins[i] = new Double((double)this.Class.get(i)/(double)this.totalInstances);
+            for(int j=0;j<ins.numAttributes()-1;j++){
+                classins[i] *= (Model.get(j).get(getIndex(ins.value(j), j)).get(i)/Class.get(i));
+            }
+        }
+        double max = classins[0];
+        for(int i =0;i<classins.length;i++){
+            if(classins[i]>max){
+                max = classins[i];
+                result = new Double(i);
+            }
+        }
+        return result;
+    }
+    
+    private int getIndex(double ins, int x){
+        for(int i = 0; i<value.get(x).size();i++){
+            if(value.get(x).get(i) == ins){
+                return i;
+            }
+        }
+        return 0;
     }
     
     public static void main(String[] args) throws Exception {
@@ -92,9 +137,10 @@ public class NaiveBayes extends AbstractClassifier{
         //mlp.setLearningRate(0.1);
         //mlp.setValidationThreshold(0.5);
         mlp.buildClassifier(ix);
-        
-        for(int z = 0; z<i.size();z++){
-            System.out.println(i.get(z).value(0));
-        }
+        double k = mlp.classifyInstance(ix.get(149));
+        System.out.println(k + ", "+ix.get(149).classValue());
+        //for(int z = 0; z<i.size();z++){
+          //  System.out.println(i.get(z).value(0));
+       //S }
     }
 }
