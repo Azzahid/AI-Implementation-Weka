@@ -1,5 +1,6 @@
 import java.io.FileOutputStream;
 import java.io.ObjectOutputStream;
+import java.util.Date;
 import java.util.Random;
 import java.util.Scanner;
 import weka.classifiers.Classifier;
@@ -80,7 +81,7 @@ public class Tester {
 
     private static void experiment() throws Exception {
         double learnRate = 0.05; //current variable
-        double valThres = 0.005;
+        double valThres;
         int trueAnswer;
         Classifier c;
         Evaluation e;
@@ -91,33 +92,38 @@ public class Tester {
         int maxTrueAnswer = -1;
         Instances i = new ConverterUtils.DataSource("Team.arff").getDataSet(); //load data
         i.setClassIndex(i.numAttributes() - 1);
-        System.out.println("learning rate, validation threshold, number of hidden neuron = correct answer");
+        System.out.println("Learning rate, validation threshold, number of hidden neuron = correct answer");
+        System.out.println("Start " + new Date().toString());
         while (learnRate <= 0.95) {
-            while (valThres <= 0.1) {
-                for (int nHidden = 0; nHidden <= 50; nHidden++) {
+            valThres = 1;
+            while (valThres <= 50) {
+                for (int nHidden = 0; nHidden <= 0; nHidden++) {
                     c = new ANN(learnRate, valThres, nHidden); //build classifier
                     c.buildClassifier(i);
                     e = new Evaluation(i);
                     //e.evaluateModel(c, i); //full training
                     e.crossValidateModel(c, i, 10, new Random(1)); //10 cross fold validation
                     trueAnswer = (int) e.correct();
-                    System.out.printf("%.2f %.3f %2d = %d\n", learnRate, valThres, nHidden, trueAnswer);
+                    System.out.printf("%.2f %2.1f %2d = %3d\n", learnRate, valThres, nHidden, trueAnswer);
                     if (trueAnswer > max) {
+                        max = trueAnswer;
                         maxLearnRate = learnRate;
                         maxValThres = valThres;
                         maxNHidden = nHidden;
                         maxTrueAnswer = trueAnswer;
                     }
                 }
-                valThres += 0.005;
+                valThres += 1;
             }
             learnRate += 0.05;
         }
-        System.out.printf("Maksimum : %.2f %.3f %2d = %d dari %d\n", maxLearnRate, maxValThres, maxNHidden, maxTrueAnswer, i.numAttributes());
+        System.out.println("Finish " + new Date().toString());
+        System.out.printf("Maksimum : %.2f %2.1f %2d = %3d dari %3d\n",
+            maxLearnRate, maxValThres, maxNHidden, maxTrueAnswer, i.numInstances());
     }
 
     public static void main(String[] args) throws Exception {
-        experiment(); System.exit(0); //komentari baris ini jika mau test manual
+        //experiment(); System.exit(0); //komentari baris ini jika mau test manual
         Scanner s = new Scanner(System.in);
         Instances i = getInstances(s);
         Classifier c = getClassifier(s, i);

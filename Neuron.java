@@ -1,5 +1,4 @@
 import java.io.Serializable;
-import java.util.Arrays;
 
 class Neuron implements Serializable {
     private double sign;
@@ -10,7 +9,9 @@ class Neuron implements Serializable {
     public Neuron(int nInput) {
         this.nInput = nInput;
         weight = new double[nInput];
-        Arrays.fill(weight, 0);
+        for (int i = 0; i < nInput; i++) {
+            weight[i] = Math.random();
+        }
     }
 
     private double activationF(double x) {

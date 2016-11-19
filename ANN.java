@@ -12,6 +12,7 @@ public class ANN extends AbstractClassifier implements Serializable {
     private int nCol; //jumlah atribut atau sama aja jumlah data + bias
     private int nRow; //jumlah instance
     private int idxClass; //index kolom posisi class
+    private double[] avg;
     private double[] max; //nilai maksimum di setiap atribut
     private Neuron[] hidNode; //neuron pada layer hidden
     private Neuron[] outNode; //neuron pada layer output
@@ -115,7 +116,7 @@ public class ANN extends AbstractClassifier implements Serializable {
             for (Neuron n : outNode) { //ini ngarang, jumlahin semua error untuk menentukan iterasi selanjutnya
                 error += n.getError();
             }
-        } while((error > valThres || error < -valThres) && iterasi < 2000);
+        } while((error > valThres || error < -valThres) && iterasi < 3000);
         //cetak hasilnya yaitu bobot-bobot yang ada pada tiap neuron
         //System.out.printf("\nIterasi %d error %.3f\n", iterasi, error); //komentari baris ini jika experiment()
         //printWeight(); //komentari baris ini jika experiment()
@@ -142,17 +143,25 @@ public class ANN extends AbstractClassifier implements Serializable {
         for (int i = 0; i < nRow; i++) {
             System.arraycopy(insNumeric[i], 0, insNormalize[i], 0, nCol + 1);
         }
+        double[] sum = new double[nCol];
+        Arrays.fill(sum, 0);
         max = new double[nCol]; //cari maksimum
         System.arraycopy(insNumeric[0], 0, max, 0, nCol);
         for (int i = 1; i < nRow; i++) {
             for (int j = 1; j < nCol; j++) {
+                sum[j] += insNumeric[i][j];
                 if (insNumeric[i][j] > max[j]) {
                     max[j] = insNumeric[i][j];
                 }
             }
         }
-        for (int i = 0; i < nRow; i++) { //normalize
+        avg = new double[nCol]; //cari rata-rata
+        for (int i = 0; i < nCol; i++) {
+            avg[i] = sum[i] / nRow;
+        }
+        for (int i = 0; i < nRow; i++) { //zero center and normalize
             for (int j = 1; j < nCol; j++) {
+                insNormalize[i][j] -= avg[j];
                 insNormalize[i][j] /= max[j];
             }
         }
@@ -185,7 +194,8 @@ public class ANN extends AbstractClassifier implements Serializable {
         double[] insNumeric = new double[nCol + 1];
         insNumeric[0] = 1; //bias di kolom pertama
         for (int i = 0; i < nCol - 1; i++) { //ASUMSI class di atribut terakhir
-            insNumeric[i + 1] = ins.value(i) / max[i + 1];
+            insNumeric[i + 1] = ins.value(i) - avg[i + 1];
+            insNumeric[i + 1] /= max[i + 1];
         }
         insNumeric[nCol] = ins.value(idxClass - 1);
         double[] inputToOutLayer = insNumeric;
