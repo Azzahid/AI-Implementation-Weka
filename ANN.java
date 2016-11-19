@@ -123,16 +123,22 @@ public class ANN extends AbstractClassifier implements Serializable {
     }
 
     private double[][] whateverToNumeric(Instances ins) {
-        /*
-        UNDER CONSTRUCTION
-        memindahkan class dimanapun posisi atribut awalnya menjadi di kolom terakhir
-        */
         double[][] insNumeric = new double [nRow][nCol + 1]; //kolom +1 untuk bias
-        for (int i = 0; i < nCol; i++) { //ASUMSI class di atribut terakhir
+        for (double[] i : insNumeric) {
+            i[0] = 1; //bias di kolom pertama
+        }
+        int idxData = 1; //data dimulai dari kolom ke-2 (array idx = 1)
+        for (int i = 0; i < nCol; i++) {
             double[] numeric = ins.attributeToDoubleArray(i);
-            for (int j = 0; j < nRow; j++) {
-                insNumeric[j][0] = 1; //bias di kolom pertama
-                insNumeric[j][i + 1] = numeric[j];
+            if (i == idxClass) {
+                for (int j = 0; j < nRow; j++) {
+                    insNumeric[j][nCol] = numeric[j]; //atribut di kolom terakhir
+                }
+            } else {
+                for (int j = 0; j < nRow; j++) {
+                    insNumeric[j][idxData] = numeric[j];
+                }
+                idxData++;
             }
         }
         return insNumeric;
@@ -143,10 +149,10 @@ public class ANN extends AbstractClassifier implements Serializable {
         for (int i = 0; i < nRow; i++) {
             System.arraycopy(insNumeric[i], 0, insNormalize[i], 0, nCol + 1);
         }
-        double[] sum = new double[nCol];
-        Arrays.fill(sum, 0);
         max = new double[nCol]; //cari maksimum
         System.arraycopy(insNumeric[0], 0, max, 0, nCol);
+        double[] sum = new double[nCol]; //hitung jumlah buat rata-rata
+        Arrays.fill(sum, 0);
         for (int i = 1; i < nRow; i++) {
             for (int j = 1; j < nCol; j++) {
                 sum[j] += insNumeric[i][j];
@@ -186,18 +192,19 @@ public class ANN extends AbstractClassifier implements Serializable {
 
     @Override
     public double classifyInstance(Instance ins) throws Exception {
-        /*
-        UNDER CONSTRUCTION
-        memindahkan class dimanapun posisi atribut awalnya menjadi di kolom terakhir
-        */
         //whateverToNumeric() sekaligus normalize()
         double[] insNumeric = new double[nCol + 1];
         insNumeric[0] = 1; //bias di kolom pertama
-        for (int i = 0; i < nCol - 1; i++) { //ASUMSI class di atribut terakhir
-            insNumeric[i + 1] = ins.value(i) - avg[i + 1];
-            insNumeric[i + 1] /= max[i + 1];
+        int idxData = 1; //data dimulai dari kolom ke-2 (array idx = 1)
+        for (int i = 0; i < nCol; i++) {
+            if (i == idxClass) {
+                insNumeric[nCol] = ins.value(i);
+            } else { //zero center and normalize
+                insNumeric[idxData] = ins.value(i) - avg[idxData];
+                insNumeric[idxData] /= max[idxData];
+                idxData++;
+            }
         }
-        insNumeric[nCol] = ins.value(idxClass - 1);
         double[] inputToOutLayer = insNumeric;
         if (nHidden > 0) {
             double[] signHid = new double[nHidden + 1]; //hasil setelah AF lalu masuk ke neuron output
