@@ -26,7 +26,7 @@ class Neuron implements Serializable {
         sign = activationF(sigma); //masukkan kedalam AF
     }
 
-    public void countErrSingle(int target, int sign) {
+    public void countErrSingle(int target) {
         error = target - sign;
     }
 

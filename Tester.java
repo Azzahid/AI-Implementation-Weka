@@ -123,12 +123,12 @@ public class Tester {
     }
 
     public static void main(String[] args) throws Exception {
-        experiment(); System.exit(0); //komentari baris ini jika mau test manual
+        //experiment(); System.exit(0); //komentari baris ini jika mau test manual
         Scanner s = new Scanner(System.in);
         Instances i = getInstances(s);
         Classifier c = getClassifier(s, i);
         Evaluation e = getEvaluation(s, i, c);
-        System.out.println(e.toSummaryString());
+        System.out.println(e.toSummaryString(true));
         saveModel(s, c);
     }
 }
