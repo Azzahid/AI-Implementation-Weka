@@ -10,36 +10,36 @@ class Neuron implements Serializable {
         this.nInput = nInput;
         weight = new double[nInput];
         for (int i = 0; i < nInput; i++) {
-            weight[i] = Math.random();
+            weight[i] = Math.random(); //random initial weight
         }
     }
 
     private double activationF(double x) {
-        return 1 / (1 + Math.pow(Math.E, -x)); //sigmoid function
+        return 1 / (1 + Math.pow(Math.E, -x)); //sigmoid
     }
 
     public void countSign(double[] input) {
-        double sigma = 0; //hitung sigma
+        double sigma = 0;
         for (int i = 0; i < nInput; i++) {
             sigma += input[i] * weight[i];
         }
-        sign = activationF(sigma); //masukkan kedalam AF
+        sign = activationF(sigma);
     }
 
     public void countErrSingle(int target) {
         error = target - sign;
     }
 
-    public void countErrOut(double target) {
-        error = sign * (1 - sign) * (target - sign); //ikutin rumus
+    public void countErrOut(int target) {
+        error = sign * (1 - sign) * (target - sign);
     }
 
     public void countErrHid(double sum) {
-        error = sign * (1 - sign) * sum; //ikutin rumus
+        error = sign * (1 - sign) * sum;
     }
 
     public void updateWeight(double learnRate, double[] input) {
-        for (int i = 0; i < nInput; i++) { //semua input bobotnya diatur ulang
+        for (int i = 0; i < nInput; i++) {
             weight[i] += (learnRate * error * input[i]);
         }
     }

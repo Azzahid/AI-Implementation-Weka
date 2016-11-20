@@ -31,8 +31,6 @@ public class Tester {
             case 1 :
                 System.out.print("\nLearning rate, validation threshold, number of hidden neuron : ");
                 c = new ANN(s.nextDouble(), s.nextDouble(), s.nextInt());
-                System.out.println("Building...");
-                c.buildClassifier(i);
                 break;
             case 2 :
                 System.out.printf("\nFile MODEL name : ");
@@ -51,6 +49,7 @@ public class Tester {
         Evaluation e = new Evaluation(i);
         switch(s.nextInt()) {
             case 1 :
+                c.buildClassifier(i);
                 e.evaluateModel(c, i);
                 break;
             case 2 :
@@ -80,12 +79,13 @@ public class Tester {
     }
 
     private static void experiment() throws Exception {
-        double learnRate = 0.05; //current variable
+        double learnRate; //current variable
         double valThres;
+        int nHidden;
         int trueAnswer;
         Classifier c;
         Evaluation e;
-        double max = -1; //variabel saat nilai maksimum
+        double max = 102; //variabel saat nilai maksimum
         double maxLearnRate = -1;
         double maxValThres = -1;
         int maxNHidden = -1;
@@ -94,17 +94,19 @@ public class Tester {
         i.setClassIndex(i.numAttributes() - 1);
         System.out.println("Learning rate, validation threshold, number of hidden neuron = correct answer");
         System.out.println("Start " + new Date().toString());
-        while (learnRate <= 0.95) {
-            valThres = 0.001;
-            while (valThres <= 0.02) {
-                for (int nHidden = 1; nHidden <= 50; nHidden++) {
+        learnRate = 0.05;
+        while (learnRate <= 0.30) {
+            valThres = 0.05;
+            while (valThres <= 0.30) {
+                nHidden = 1;
+                while (nHidden <= 30) {
                     c = new ANN(learnRate, valThres, nHidden); //build classifier
-                    c.buildClassifier(i);
+                    //c.buildClassifier(i);
                     e = new Evaluation(i);
                     //e.evaluateModel(c, i); //full training
                     e.crossValidateModel(c, i, 10, new Random(1)); //10 cross fold validation
                     trueAnswer = (int) e.correct();
-                    System.out.printf("%.2f %.3f %2d = %3d\n", learnRate, valThres, nHidden, trueAnswer);
+                    System.out.printf("%.2f %.2f %2d = %3d\n", learnRate, valThres, nHidden, trueAnswer);
                     if (trueAnswer > max) {
                         max = trueAnswer;
                         maxLearnRate = learnRate;
@@ -112,23 +114,26 @@ public class Tester {
                         maxNHidden = nHidden;
                         maxTrueAnswer = trueAnswer;
                     }
+                    nHidden += 1;
                 }
-                valThres += 0.001;
+                valThres += 1;
             }
             learnRate += 0.05;
         }
         System.out.println("Finish " + new Date().toString());
-        System.out.printf("Maksimum : %.2f %.3f %2d = %3d dari %3d\n",
+        System.out.printf("Maksimum : %.2f %.2f %2d = %3d dari %3d\n",
             maxLearnRate, maxValThres, maxNHidden, maxTrueAnswer, i.numInstances());
     }
 
     public static void main(String[] args) throws Exception {
+        Thread.currentThread().setPriority(Thread.MAX_PRIORITY); //biar cepet
         //experiment(); System.exit(0); //komentari baris ini jika mau test manual
         Scanner s = new Scanner(System.in);
         Instances i = getInstances(s);
         Classifier c = getClassifier(s, i);
         Evaluation e = getEvaluation(s, i, c);
         System.out.println(e.toSummaryString(true));
+        System.out.println(e.toMatrixString());
         saveModel(s, c);
     }
 }

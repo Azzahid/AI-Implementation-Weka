@@ -14,8 +14,8 @@ public class ANN extends AbstractClassifier implements Serializable {
     private int idxClass; //index kolom posisi class
     private double[] avg;
     private double[] max; //nilai maksimum di setiap atribut
-    private Neuron[] hidNode; //neuron pada layer hidden
-    private Neuron[] outNode; //neuron pada layer output
+    private Neuron[] hidNeuron; //neuron pada layer hidden
+    private Neuron[] outNeuron; //neuron pada layer output
 
     public ANN(double learnRate, double valThres, int nHidden) {
         this.learnRate = learnRate;
@@ -24,9 +24,9 @@ public class ANN extends AbstractClassifier implements Serializable {
     }
 
     private void singleLayer(double[][] insNum, int[][] target) {
-        outNode = new Neuron[nOutput]; //buat objek neuron-neuron pada layer output
+        outNeuron = new Neuron[nOutput]; //buat objek neuron-neuron pada layer output
         for (int i = 0; i < nOutput; i++) {
-            outNode[i] = new Neuron(nCol);
+            outNeuron[i] = new Neuron(nCol);
         }
         int iterasi = 0;
         double error;
@@ -37,26 +37,25 @@ public class ANN extends AbstractClassifier implements Serializable {
             for (int i = 0; i < nRow; i++) {
                 //satu kali hitung row = hitung seluruh neuron output
                 for (int j = 0; j < nOutput; j++) {
-                    outNode[j].countSign(insNum[i]); //hitung sign
-                    outNode[j].countErrSingle(target[i][j]); //hitung error
-                    outNode[j].updateWeight(learnRate, insNum[i]); //update bobot
-                    error += (Math.pow(outNode[j].getError(), 2) / 2); //kumulatif half square error
+                    outNeuron[j].countSign(insNum[i]); //hitung sign
+                    outNeuron[j].countErrSingle(target[i][j]); //hitung error
+                    outNeuron[j].updateWeight(learnRate, insNum[i]); //update bobot
+                    error += (Math.pow(outNeuron[j].getError(), 2) / 2); //kumulatif half square error
                 }
             }
-            System.out.printf("Iterasi %d error %.20f\n", iterasi, error); //komentari baris ini jika experiment()
-        } while((error > valThres || error < -valThres) && iterasi < 10000);
-        //cetak hasilnya yaitu bobot-bobot yang ada pada tiap neuron
-        //printWeight(); //komentari baris ini jika experiment()
+        } while((error > valThres || error < -valThres) && iterasi < 30000);
+        System.out.printf("Iterasi %d error %f\n", iterasi, error);
+        //printWeight(); //cetak hasil, komentari baris ini jika experiment
     }
 
     private void dualLayer(double[][] insNum, int[][] target) {
-        hidNode = new Neuron[nHidden];  //buat objek neuron-neuron pada layer hidden
+        hidNeuron = new Neuron[nHidden];  //buat objek neuron-neuron pada layer hidden
         for (int i = 0; i < nHidden; i++) {
-            hidNode[i] = new Neuron(nCol);
+            hidNeuron[i] = new Neuron(nCol);
         }
-        outNode = new Neuron[nOutput];  //buat objek neuron-neuron pada layer output
+        outNeuron = new Neuron[nOutput];  //buat objek neuron-neuron pada layer output
         for (int i = 0; i < nOutput; i++) {
-            outNode[i] = new Neuron(nHidden + 1); //kolom +1 untuk bias
+            outNeuron[i] = new Neuron(nHidden + 1); //kolom +1 untuk bias
         }
         double[] signHid = new double[nHidden + 1]; //hasil setelah AF lalu masuk ke neuron output
         signHid[0] = 1; //bias di kolom pertama
@@ -69,36 +68,32 @@ public class ANN extends AbstractClassifier implements Serializable {
             for (int i = 0; i < nRow; i++) {
                 //menghitung sign untuk setiap neuron hidden
                 for (int j = 0; j < nHidden; j++) {
-                    hidNode[j].countSign(insNum[i]);
-                    signHid[j + 1] = hidNode[j].getSign();
+                    hidNeuron[j].countSign(insNum[i]);
+                    signHid[j + 1] = hidNeuron[j].getSign();
                 }
                 //menghitung sign dan error untuk setiap neuron output
                 for (int j = 0; j < nOutput; j++) {
-                    outNode[j].countSign(signHid);
-                    outNode[j].countErrOut(target[i][j]);
+                    outNeuron[j].countSign(signHid);
+                    outNeuron[j].countErrOut(target[i][j]);
                 }
                 //menghitung error dan update bobot untuk setiap neuron hidden
                 for (int j = 0; j < nHidden; j++) {
                     double sumErrXW = 0; //jumlah error x weight
-                    for (Neuron n : outNode) {
+                    for (Neuron n : outNeuron) {
                         sumErrXW += (n.getError() * n.getWeight()[j]);
                     }
-                    hidNode[j].countErrHid(sumErrXW);
-                    hidNode[j].updateWeight(learnRate, insNum[i]);
+                    hidNeuron[j].countErrHid(sumErrXW);
+                    hidNeuron[j].updateWeight(learnRate, insNum[i]);
                 }
                 //update bobot untuk setiap neuron output
-                for (Neuron n : outNode) {
+                for (Neuron n : outNeuron) {
                     n.updateWeight(learnRate, signHid);
+                    error += (Math.pow(n.getError(), 2) / 2); //kumulatif half square error
                 }
             }
-            for (Neuron n : outNode) {
-                error += n.getError(); //kumulatif
-                //error += (Math.pow(n.getError(), 2) / 2); //kumulatif half square error
-            }
-            System.out.printf("Iterasi %d error %f\n", iterasi, error); //komentari baris ini jika experiment()
-        } while((error > valThres || error < -valThres) && iterasi < 5000);
-        //cetak hasilnya yaitu bobot-bobot yang ada pada tiap neuron
-        //printWeight(); //komentari baris ini jika experiment()
+        } while((error > valThres || error < -valThres) && iterasi < 15000);
+        System.out.printf("Iterasi %d error %f\n", iterasi, error);
+        //printWeight(); //cetak hasil, komentari baris ini jika experiment
     }
 
     private double[][] whateverToNumeric(Instances ins) {
@@ -111,7 +106,7 @@ public class ANN extends AbstractClassifier implements Serializable {
             double[] num = ins.attributeToDoubleArray(i);
             if (i == idxClass) {
                 for (int j = 0; j < nRow; j++) {
-                    insNum[j][nCol] = num[j]; //atribut di kolom terakhir
+                    insNum[j][nCol] = num[j]; //atribut kelas di kolom terakhir
                 }
             } else {
                 for (int j = 0; j < nRow; j++) {
@@ -126,28 +121,30 @@ public class ANN extends AbstractClassifier implements Serializable {
     private void zeroCNormalize(double[][] insNum) {
         double[] sum = new double[nCol]; //jumlah buat rata-rata
         Arrays.fill(sum, 0);
-        max = new double[nCol]; //cari maksimum
+        //cari maksimum untuk setiap atribut
+        max = new double[nCol];
         System.arraycopy(insNum[0], 0, max, 0, nCol);
-        for (int i = 1; i < nRow; i++) {
+        for (double[] i : insNum) {
             for (int j = 1; j < nCol; j++) { //bias tidak diperhitungkan
-                sum[j] += insNum[i][j];
-                if (insNum[i][j] > max[j]) {
-                    max[j] = insNum[i][j];
+                sum[j] += i[j];
+                if (i[j] > max[j]) {
+                    max[j] = i[j];
                 }
             }
         }
-        avg = new double[nCol]; //rata-rata
+        //hitung rata-rata untuk setiap atribut
+        avg = new double[nCol];
         for (int i = 0; i < nCol; i++) {
             avg[i] = sum[i] / nRow;
             max[i] -= avg[i];
         }
+        //zero center lalu normalize (ubah insNum menjadi rentang -1 sampai 1)
         for (int i = 0; i < nRow; i++) {
-            for (int j = 1; j < nCol; j++) { //bias tidak diperhitungkan
-                insNum[i][j] -= avg[j]; //zero center and normalize
+            for (int j = 1; j < nCol; j++) { //bias tidak diubah
+                insNum[i][j] -= avg[j];
                 insNum[i][j] /= max[j];
             }
         }
-        //FINAL STATE : insNum menjadi rentang -1 sampai 1
     }
 
     private int[][] buildTarget(double[][] insNum) {
@@ -172,7 +169,7 @@ public class ANN extends AbstractClassifier implements Serializable {
         insNum[0] = 1; //bias di kolom pertama
         int idxData = 1; //data dimulai dari kolom ke-2 (array idx = 1)
         for (int i = 0; i < nCol; i++) {
-            if (i == idxClass) {
+            if (i == idxClass) { //atribut kelas di kolom terakhir
                 insNum[nCol] = ins.value(i);
             } else { //zero center and normalize
                 insNum[idxData] = ins.value(i) - avg[idxData];
@@ -185,8 +182,8 @@ public class ANN extends AbstractClassifier implements Serializable {
             double[] signHid = new double[nHidden + 1]; //hasil setelah AF lalu masuk ke neuron output
             signHid[0] = 1; //bias di kolom pertama
             for (int j = 0; j < nHidden; j++) { //menghitung sign untuk setiap neuron hidden
-                hidNode[j].countSign(insNum);
-                signHid[j + 1] = hidNode[j].getSign();
+                hidNeuron[j].countSign(insNum);
+                signHid[j + 1] = hidNeuron[j].getSign();
             }
             inputToOutLayer = signHid;
         }
@@ -194,8 +191,8 @@ public class ANN extends AbstractClassifier implements Serializable {
         double signMax = -1; //nilai sign output yang paling besar
         //menghitung sign untuk setiap neuron output sekaligus cari sign terbesar
         for (int j = 0; j < nOutput; j++) {
-            outNode[j].countSign(inputToOutLayer);
-            double sign = outNode[j].getSign();
+            outNeuron[j].countSign(inputToOutLayer);
+            double sign = outNeuron[j].getSign();
             if (sign > signMax) {
                 idxMax = j;
                 signMax = sign;
@@ -203,8 +200,7 @@ public class ANN extends AbstractClassifier implements Serializable {
         }
         if (nOutput == 1) { //kelas boolean masuk sini
             return signMax > 0.5 ? 1 : 0;
-        } else {
-            //sign output tidak perlu diubah menjadi 0 atau 1, langsung return indeksnya
+        } else { //sign output tidak perlu diubah menjadi 0 atau 1
             return idxMax;
         }
     }
@@ -215,9 +211,8 @@ public class ANN extends AbstractClassifier implements Serializable {
         nRow = ins.numInstances();
         idxClass = ins.classIndex();
         nOutput = ins.numDistinctValues(idxClass);
-        System.out.println(nOutput);
         nOutput = nOutput == 2 ? 1 : nOutput; //jenis kelas boolean cukup 1 neuron output
-        double[][] insNum = whateverToNumeric(ins); //ubah ke numeric
+        double[][] insNum = whateverToNumeric(ins);
         zeroCNormalize(insNum);
         int[][] target = buildTarget(insNum);
         if (nHidden == 0) {
@@ -228,11 +223,12 @@ public class ANN extends AbstractClassifier implements Serializable {
     }
 
     private void printWeight() {
+        //cetak model (semua bobot yang ada pada semua neuron)
         int nInputToOutLayer = nCol;
         if (nHidden > 0) {
             System.out.println("\nHidden Layer");
             for (int i = 0; i < nHidden; i++) {
-                double[] weight = hidNode[i].getWeight();
+                double[] weight = hidNeuron[i].getWeight();
                 System.out.printf("H%d -> bias(%.3f) ", i + 1, weight[0]);
                 for (int j = 1; j < nCol; j++) {
                     System.out.printf("w%d%d(%.3f) ", j, i + 1, weight[j]);
@@ -243,7 +239,7 @@ public class ANN extends AbstractClassifier implements Serializable {
         }
         System.out.println("\nOutput Layer");
         for (int i = 0; i < nOutput; i++) {
-            double[] weight = outNode[i].getWeight();
+            double[] weight = outNeuron[i].getWeight();
             System.out.printf("O%d -> bias(%.3f) ", i + 1, weight[0]);
             for (int j = 1; j < nInputToOutLayer; j++) {
                 System.out.printf("w%d%d(%.3f) ", j, i + 1, weight[j]);
