@@ -85,7 +85,7 @@ public class Tester {
         int trueAnswer;
         Classifier c;
         Evaluation e;
-        double max = 102; //variabel saat nilai maksimum
+        double max = -1; //variabel saat nilai maksimum
         double maxLearnRate = -1;
         double maxValThres = -1;
         int maxNHidden = -1;
