@@ -1,0 +1,23 @@
+Experiment on Team.arff
+Cls: Naive Bayes	PctCorrect: 39.10891089108911 %
+Cls: J48         	PctCorrect: 37.62376237623762 %
+Cls: SMO        	PctCorrect: 46.53465346534654 %
+Best Trial: SMO        
+Enter model filename to save: model1
+Model saved
+
+Experiment on iris.arff
+Cls: Naive Bayes	PctCorrect: 96.0 %
+Cls: J48         	PctCorrect: 96.0 %
+Cls: SMO        	PctCorrect: 96.0 %
+Best Trial: Naive Bayes
+Enter model filename to save: model2
+Model saved
+
+Experiment on mush.arff
+Cls: Naive Bayes	PctCorrect: 95.43328409650418 %
+Cls: J48         	PctCorrect: 100.0 %
+Cls: SMO        	PctCorrect: 100.0 %
+Best Trial: J48         
+Enter model filename to save: model3
+Model saved
