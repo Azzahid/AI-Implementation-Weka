@@ -6,8 +6,8 @@ import weka.core.Instances;
 
 public class ANN extends AbstractClassifier implements Serializable {
     private final double learnRate;
-    private final double valThres;
     private final int nHidden; //jumlah neuron pada layer hidden
+    private final int maxEpoch; //learning berhenti berdasarkan epoch
     private int nOutput; //jumlah neuron pada layer output
     private int nCol; //jumlah atribut atau sama aja jumlah data + bias
     private int nRow; //jumlah instance
@@ -17,10 +17,10 @@ public class ANN extends AbstractClassifier implements Serializable {
     private Neuron[] hidNeuron; //neuron pada layer hidden
     private Neuron[] outNeuron; //neuron pada layer output
 
-    public ANN(double learnRate, double valThres, int nHidden) {
+    public ANN(double learnRate, int nHidden, int maxEpoch) {
         this.learnRate = learnRate;
-        this.valThres = valThres;
         this.nHidden = nHidden;
+        this.maxEpoch = maxEpoch;
     }
 
     private void singleLayer(double[][] insNum, int[][] target) {
@@ -28,23 +28,19 @@ public class ANN extends AbstractClassifier implements Serializable {
         for (int i = 0; i < nOutput; i++) {
             outNeuron[i] = new Neuron(nCol);
         }
-        int iterasi = 0;
-        double error;
+        int epoch = 0;
         do {
-            iterasi++;
-            error = 0;
-            //satu kali iterasi = hitung seluruh row
+            epoch++;
+            //satu kali epoch = hitung seluruh row
             for (int i = 0; i < nRow; i++) {
                 //satu kali hitung row = hitung seluruh neuron output
                 for (int j = 0; j < nOutput; j++) {
                     outNeuron[j].countSign(insNum[i]); //hitung sign
                     outNeuron[j].countErrSingle(target[i][j]); //hitung error
                     outNeuron[j].updateWeight(learnRate, insNum[i]); //update bobot
-                    error += (Math.pow(outNeuron[j].getError(), 2) / 2); //kumulatif half square error
                 }
             }
-        } while((error > valThres || error < -valThres) && iterasi < 30000);
-        System.out.printf("Iterasi %d error %f\n", iterasi, error);
+        } while(epoch < maxEpoch);
         //printWeight(); //cetak hasil, komentari baris ini jika experiment
     }
 
@@ -59,12 +55,10 @@ public class ANN extends AbstractClassifier implements Serializable {
         }
         double[] signHid = new double[nHidden + 1]; //hasil setelah AF lalu masuk ke neuron output
         signHid[0] = 1; //bias di kolom pertama
-        int iterasi = 0;
-        double error;
+        int epoch = 0;
         do {
-            iterasi++;
-            error = 0;
-            //satu kali iterasi = hitung seluruh row
+            epoch++;
+            //satu kali epoch = hitung seluruh row
             for (int i = 0; i < nRow; i++) {
                 //menghitung sign untuk setiap neuron hidden
                 for (int j = 0; j < nHidden; j++) {
@@ -88,11 +82,9 @@ public class ANN extends AbstractClassifier implements Serializable {
                 //update bobot untuk setiap neuron output
                 for (Neuron n : outNeuron) {
                     n.updateWeight(learnRate, signHid);
-                    error += (Math.pow(n.getError(), 2) / 2); //kumulatif half square error
                 }
             }
-        } while((error > valThres || error < -valThres) && iterasi < 15000);
-        System.out.printf("Iterasi %d error %f\n", iterasi, error);
+        } while(epoch < maxEpoch);
         //printWeight(); //cetak hasil, komentari baris ini jika experiment
     }
 
