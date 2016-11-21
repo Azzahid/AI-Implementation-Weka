@@ -10,6 +10,8 @@ import java.util.Enumeration;
 import java.util.List;
 import java.lang.Integer;
 import weka.classifiers.AbstractClassifier;
+import weka.classifiers.Evaluation;
+import weka.classifiers.trees.J48;
 import weka.core.Attribute;
 import weka.core.Capabilities.Capability;
 import weka.core.Instance;
@@ -34,7 +36,8 @@ public class NaiveBayes extends AbstractClassifier{
     public void buildClassifier(Instances ins) throws Exception {
         Enumeration<Attribute> enu = ins.enumerateAttributes();
         Attribute attr = enu.nextElement();
-        
+        getClassTotalInstances(ins);
+        totalInstances = new Double(ins.numInstances());
         if(attr.type() != Attribute.NOMINAL){
             System.out.println("Error : the instances attribute is "+attr.type()+", Filter to Nominal");
         }else{
@@ -52,32 +55,35 @@ public class NaiveBayes extends AbstractClassifier{
                         this.value.get(j).add(l, ins.get(k).value(j));
                         this.Model.get(j).add(l, new ArrayList<Double>());
                         for(int i =0; i<ins.numClasses();i++){
-                            this.Model.get(j).get(l).add(new Double(i));
+                            this.Model.get(j).get(l).add(i,new Double(0));
                         }
                         l++;
-                    }else{
-                        //System.out.println(value.get(i).get(j).size());
-                        for(int m =0;m<value.get(j).size();m++){
-                            if(ins.get(k).value(j)==this.value.get(j).get(m)){
-                                Model.get(j).get(m).set(classval, Model.get(j).get(m).get(classval)+1.0);
-                                x = true;
-                            }
-                        }
-                        if(!x){
-                            this.value.get(j).add(l, ins.get(k).value(j));
-                            this.Model.get(j).add(l, new ArrayList<Double>());
-                            for(int i =0; i<ins.numClasses();i++){
-                                this.Model.get(j).get(l).add(new Double(i));
-                            }
-                            l++;
+                    }
+                    //System.out.println(value.get(i).get(j).size());
+                    for(int m =0;m<value.get(j).size();m++){
+                        if(ins.get(k).value(j)==this.value.get(j).get(m)){
+                            Model.get(j).get(m).set(classval, Model.get(j).get(m).get(classval)+1);
+                            x = true;
                         }
                     }
-                    
+                    if(!x){
+                        this.value.get(j).add(l, ins.get(k).value(j));
+                        this.Model.get(j).add(l, new ArrayList<Double>());
+                        for(int i =0; i<ins.numClasses();i++){
+                            this.Model.get(j).get(l).add(i,new Double(0));
+                        }
+                        l++;
+                        for(int m =0;m<value.get(j).size();m++){
+                        if(ins.get(k).value(j)==this.value.get(j).get(m)){
+                            Model.get(j).get(m).set(classval, Model.get(j).get(m).get(classval)+1);
+                            x = true;
+                        }
+                    }
+                    }
                 }
             }
         }
-        getClassTotalInstances(ins);
-        totalInstances = new Double(ins.numInstances());
+        
         //System.out.println("fish");
     }
     
@@ -121,26 +127,4 @@ public class NaiveBayes extends AbstractClassifier{
         return 0;
     }
     
-    public static void main(String[] args) throws Exception {
-        Instances i = new DataSource("iris.arff").getDataSet();
-        i.setClassIndex(i.numAttributes() - 1); //kelas = atribut terakhir
-        Discretize filter = new Discretize();
-        filter.setInputFormat(i);
-        NumericToNominal x = new NumericToNominal();
-        x.setInputFormat(i);
-        Instances ix = Filter.useFilter(i, filter);
-        Instances ib = Filter.useFilter(i, x);
-        NaiveBayes mlp = new NaiveBayes();
-        /* ATTENTION: ini sementara di komantarin dulu, pake nilai-nilai default aja */
-        //System.out.print("Masukkan jumlah neuron pada hidden layer: ");
-        //mlp.setHiddenLayers(new Scanner(System.in).nextInt());
-        //mlp.setLearningRate(0.1);
-        //mlp.setValidationThreshold(0.5);
-        mlp.buildClassifier(ix);
-        double k = mlp.classifyInstance(ix.get(149));
-        System.out.println(k + ", "+ix.get(149).classValue());
-        //for(int z = 0; z<i.size();z++){
-          //  System.out.println(i.get(z).value(0));
-       //S }
-    }
 }
