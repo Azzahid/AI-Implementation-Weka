@@ -86,7 +86,7 @@ public class Tester {
         int trueAnswer;
         Classifier c;
         Evaluation e;
-        double max = -1; //variabel saat nilai maksimum
+        int max = -1; //variabel saat nilai maksimum
         double maxLearnRate = -1;
         int maxEpoch = -1;
         int maxNHidden = -1;
@@ -98,22 +98,27 @@ public class Tester {
         learnRate = 0.05;
         while (learnRate <= 0.30) {
             epoch = 1000;
-            while (epoch <= 10000) {
-                nHidden = 5;
-                while (nHidden <= 25) {
+            while (epoch <= 15000) {
+                nHidden = 1;
+                while (nHidden <= 30) {
                     e = new Evaluation(i);
                     c = new ANN(learnRate, nHidden, epoch); //build classifier
-                    c.buildClassifier(i); //full training
-                    e.evaluateModel(c, i);
-                    //e.crossValidateModel(c, i, 10, new Random(1)); //10 cross fold validation
+                    //c.buildClassifier(i); //full training
+                    //e.evaluateModel(c, i);
+                    e.crossValidateModel(c, i, 10, new Random(1)); //10 cross fold validation
                     trueAnswer = (int) e.correct();
                     System.out.printf("%.2f %2d %5d = %3d\n", learnRate, nHidden, epoch, trueAnswer);
-                    if (trueAnswer > max) {
+                    if (trueAnswer >= max) {
                         max = trueAnswer;
                         maxLearnRate = learnRate;
-                        maxEpoch = epoch;
                         maxNHidden = nHidden;
+                        maxEpoch = epoch;
                         maxTrueAnswer = trueAnswer;
+                        String filename = String.format("M-%d-%.2f-%d-%d-CROSS.model", max, maxLearnRate, maxNHidden, maxEpoch);
+                        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(filename))) { //save model
+                            oos.writeObject(c);
+                            oos.flush();
+                        }
                     }
                     nHidden += 1;
                 }
