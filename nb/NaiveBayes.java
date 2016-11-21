@@ -44,41 +44,47 @@ public class NaiveBayes extends AbstractClassifier{
             value =  new ArrayList<>();
             Model = new ArrayList<>();
             
-            for(int j=0; j<ins.numAttributes()-1;j++){
-                value.add(new ArrayList<>());
-                Model.add(new ArrayList<List<Double>>());
-                int l = 0;
-                for(int k=0;k<ins.numInstances();k++ ){
-                    int classval=(int) ins.get(k).classValue();
-                    boolean x = false;
-                    if(value.get(j).isEmpty()){
-                        this.value.get(j).add(l, ins.get(k).value(j));
-                        this.Model.get(j).add(l, new ArrayList<Double>());
-                        for(int i =0; i<ins.numClasses();i++){
-                            this.Model.get(j).get(l).add(i,new Double(0));
+            for(int j=0; j<ins.numAttributes();j++){
+                if(j == ins.classIndex()){
+                    //do nothing
+                    value.add(new ArrayList<>());
+                    Model.add(new ArrayList<List<Double>>());
+                }else{
+                    value.add(new ArrayList<>());
+                    Model.add(new ArrayList<List<Double>>());
+                    int l = 0;
+                    for(int k=0;k<ins.numInstances();k++ ){
+                        int classval=(int) ins.get(k).classValue();
+                        boolean x = false;
+                        if(value.get(j).isEmpty()){
+                            this.value.get(j).add(l, ins.get(k).value(j));
+                            this.Model.get(j).add(l, new ArrayList<Double>());
+                            for(int i =0; i<ins.numClasses();i++){
+                                this.Model.get(j).get(l).add(i,new Double(1));
+                            }
+                            l++;
                         }
-                        l++;
-                    }
-                    //System.out.println(value.get(i).get(j).size());
-                    for(int m =0;m<value.get(j).size();m++){
-                        if(ins.get(k).value(j)==this.value.get(j).get(m)){
-                            Model.get(j).get(m).set(classval, Model.get(j).get(m).get(classval)+1);
-                            x = true;
-                        }
-                    }
-                    if(!x){
-                        this.value.get(j).add(l, ins.get(k).value(j));
-                        this.Model.get(j).add(l, new ArrayList<Double>());
-                        for(int i =0; i<ins.numClasses();i++){
-                            this.Model.get(j).get(l).add(i,new Double(0));
-                        }
-                        l++;
+                        //System.out.println(value.get(i).get(j).size());
                         for(int m =0;m<value.get(j).size();m++){
-                        if(ins.get(k).value(j)==this.value.get(j).get(m)){
-                            Model.get(j).get(m).set(classval, Model.get(j).get(m).get(classval)+1);
-                            x = true;
+                            if(ins.get(k).value(j)==this.value.get(j).get(m)){
+                                Model.get(j).get(m).set(classval, Model.get(j).get(m).get(classval)+1);
+                                x = true;
+                            }
                         }
-                    }
+                        if(!x){
+                            this.value.get(j).add(l, ins.get(k).value(j));
+                            this.Model.get(j).add(l, new ArrayList<Double>());
+                            for(int i =0; i<ins.numClasses();i++){
+                                this.Model.get(j).get(l).add(i,new Double(1));
+                            }
+                            l++;
+                            for(int m =0;m<value.get(j).size();m++){
+                                if(ins.get(k).value(j)==this.value.get(j).get(m)){
+                                    Model.get(j).get(m).set(classval, Model.get(j).get(m).get(classval)+1);
+                                    x = true;
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -104,8 +110,12 @@ public class NaiveBayes extends AbstractClassifier{
         Double classins[] = new Double[ins.numClasses()];
         for(int i =0; i<ins.numClasses();i++){
             classins[i] = new Double((double)this.Class.get(i)/(double)this.totalInstances);
-            for(int j=0;j<ins.numAttributes()-1;j++){
-                classins[i] *= (Model.get(j).get(getIndex(ins.value(j), j)).get(i)/Class.get(i));
+            for(int j=0;j<ins.numAttributes();j++){
+                if(j == ins.classIndex()){
+                    //do nothing
+                }else{
+                    classins[i] *= (Model.get(j).get(getIndex(ins.value(j), j)).get(i)/Class.get(i));
+                }
             }
         }
         double max = classins[0];

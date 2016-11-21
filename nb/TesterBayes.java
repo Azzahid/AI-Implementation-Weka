@@ -110,11 +110,12 @@ public class TesterBayes {
 
     public static void main(String[] args) throws Exception {
         Thread.currentThread().setPriority(Thread.MAX_PRIORITY); //biar cepet
-        experiment(); System.exit(0); //komentari baris ini jika mau test manual
+        //experiment(); System.exit(0); //komentari baris ini jika mau test manual
         Scanner s = new Scanner(System.in);
         Instances i = getInstances(s);
         Classifier c = getClassifier(s, i);
         Evaluation e = getEvaluation(s, i, c);
+        System.out.println(e.toClassDetailsString());
         System.out.println(e.toSummaryString(true));
         System.out.println(e.toMatrixString());
         saveModel(s, c);
