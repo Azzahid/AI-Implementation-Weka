@@ -29,8 +29,10 @@ public class Tester {
         System.out.print("Choose : ");
         switch(s.nextInt()) {
             case 1 :
-                System.out.print("\nLearning rate, number of hidden neuron, number of epoch : ");
+                System.out.println("\nLearning rate; Number of hidden neuron; Number of epoch");
+                System.out.print("Separated by space : ");
                 c = new ANN(s.nextDouble(), s.nextInt(), s.nextInt());
+                c.buildClassifier(i);
                 break;
             case 2 :
                 System.out.printf("\nFile MODEL name : ");
@@ -49,7 +51,6 @@ public class Tester {
         Evaluation e = new Evaluation(i);
         switch(s.nextInt()) {
             case 1 :
-                c.buildClassifier(i);
                 e.evaluateModel(c, i);
                 break;
             case 2 :
@@ -92,21 +93,21 @@ public class Tester {
         int maxTrueAnswer = -1;
         Instances i = new ConverterUtils.DataSource("iris.arff").getDataSet(); //load data
         i.setClassIndex(i.numAttributes() - 1);
-        System.out.println("Learning rate, validation threshold, number of hidden neuron = correct answer");
+        System.out.println("Learning rate, number of hidden neuron, number of epoch = correct answer");
         System.out.println("Start " + new Date().toString());
         learnRate = 0.05;
         while (learnRate <= 0.30) {
             epoch = 1000;
-            while (epoch <= 15000) {
-                nHidden = 0;
-                while (nHidden <= 30) {
+            while (epoch <= 10000) {
+                nHidden = 5;
+                while (nHidden <= 25) {
                     e = new Evaluation(i);
                     c = new ANN(learnRate, nHidden, epoch); //build classifier
                     c.buildClassifier(i); //full training
                     e.evaluateModel(c, i);
                     //e.crossValidateModel(c, i, 10, new Random(1)); //10 cross fold validation
                     trueAnswer = (int) e.correct();
-                    System.out.printf("%.2f %5d %2d = %3d\n", learnRate, epoch, nHidden, trueAnswer);
+                    System.out.printf("%.2f %2d %5d = %3d\n", learnRate, nHidden, epoch, trueAnswer);
                     if (trueAnswer > max) {
                         max = trueAnswer;
                         maxLearnRate = learnRate;
@@ -121,8 +122,8 @@ public class Tester {
             learnRate += 0.05;
         }
         System.out.println("Finish " + new Date().toString());
-        System.out.printf("Maksimum : %.2f %5d %2d = %3d dari %3d\n",
-            maxLearnRate, maxEpoch, maxNHidden, maxTrueAnswer, i.numInstances());
+        System.out.printf("Maksimum : %.2f %2d %5d = %3d dari %3d\n",
+            maxLearnRate, maxNHidden, maxEpoch, maxTrueAnswer, i.numInstances());
     }
 
     public static void main(String[] args) throws Exception {
@@ -132,7 +133,7 @@ public class Tester {
         Instances i = getInstances(s);
         Classifier c = getClassifier(s, i);
         Evaluation e = getEvaluation(s, i, c);
-        System.out.println(e.toSummaryString(true));
+        System.out.println("\n" + e.toSummaryString(true));
         System.out.println(e.toMatrixString());
         saveModel(s, c);
     }
