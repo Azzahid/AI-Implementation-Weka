@@ -1,0 +1,1 @@
+semuanya best model, pilih salah 1 saja
