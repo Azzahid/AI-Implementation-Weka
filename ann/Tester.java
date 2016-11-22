@@ -91,21 +91,23 @@ public class Tester {
         int maxEpoch = -1;
         int maxNHidden = -1;
         int maxTrueAnswer = -1;
-        Instances i = new ConverterUtils.DataSource("iris.arff").getDataSet(); //load data
-        i.setClassIndex(i.numAttributes() - 1);
+        Instances i = new ConverterUtils.DataSource("strain.arff").getDataSet(); //load data
+        Instances itest = new ConverterUtils.DataSource("stest.arff").getDataSet();
+        i.setClassIndex(27);
+        itest.setClassIndex(27);
         System.out.println("Learning rate, number of hidden neuron, number of epoch = correct answer");
         System.out.println("Start " + new Date().toString());
         learnRate = 0.05;
         while (learnRate <= 0.30) {
-            epoch = 1000;
+            epoch = 10000;
             while (epoch <= 15000) {
-                nHidden = 1;
-                while (nHidden <= 30) {
-                    e = new Evaluation(i);
+                nHidden = 10;
+                while (nHidden <= 20) {
+                    e = new Evaluation(itest);
                     c = new ANN(learnRate, nHidden, epoch); //build classifier
-                    //c.buildClassifier(i); //full training
-                    //e.evaluateModel(c, i);
-                    e.crossValidateModel(c, i, 10, new Random(1)); //10 cross fold validation
+                    c.buildClassifier(i); //full training
+                    e.evaluateModel(c, itest);
+                    //e.crossValidateModel(c, i, 10, new Random(1)); //10 cross fold validation
                     trueAnswer = (int) e.correct();
                     System.out.printf("%.2f %2d %5d = %3d\n", learnRate, nHidden, epoch, trueAnswer);
                     if (trueAnswer >= max) {
