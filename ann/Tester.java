@@ -80,57 +80,58 @@ public class Tester {
     }
 
     private static void experiment() throws Exception {
-        double learnRate; //current variable
-        int epoch;
-        int nHidden;
-        int trueAnswer;
+        String modelname;
         Classifier c;
         Evaluation e;
-        int max = -1; //variabel saat nilai maksimum
+        //current variable
+        double learnRate;
+        int nHidden;
+        int epoch;
+        int correct;
+        //variabel saat nilai maksimum
         double maxLearnRate = -1;
-        int maxEpoch = -1;
         int maxNHidden = -1;
-        int maxTrueAnswer = -1;
-        Instances i = new ConverterUtils.DataSource("strain.arff").getDataSet(); //load data
-        Instances itest = new ConverterUtils.DataSource("stest.arff").getDataSet();
-        i.setClassIndex(27);
-        itest.setClassIndex(27);
+        int maxEpoch = -1;
+        int maxCorrect = -1;
+        //load data
+        int idxClass = 26; //Dalc = 26, Walc = 27
+        Instances insTrain = new ConverterUtils.DataSource("strain.arff").getDataSet();
+        Instances insTest = new ConverterUtils.DataSource("stest.arff").getDataSet();
+        insTrain.setClassIndex(idxClass);
+        insTest.setClassIndex(idxClass);
+        //loop untuk mendapatkan parameter terbaik
         System.out.println("Learning rate, number of hidden neuron, number of epoch = correct answer");
         System.out.println("Start " + new Date().toString());
-        learnRate = 0.05;
-        while (learnRate <= 0.30) {
-            epoch = 10000;
-            while (epoch <= 15000) {
-                nHidden = 10;
-                while (nHidden <= 20) {
-                    e = new Evaluation(itest);
-                    c = new ANN(learnRate, nHidden, epoch); //build classifier
-                    c.buildClassifier(i); //full training
-                    e.evaluateModel(c, itest);
-                    //e.crossValidateModel(c, i, 10, new Random(1)); //10 cross fold validation
-                    trueAnswer = (int) e.correct();
-                    System.out.printf("%.2f %2d %5d = %3d\n", learnRate, nHidden, epoch, trueAnswer);
-                    if (trueAnswer >= max) {
-                        max = trueAnswer;
+        for (learnRate = 0.05; learnRate <= 0.15; learnRate += 0.05) {
+            for (nHidden = 5; nHidden <= 25; nHidden++) {
+                for (epoch = 5000; epoch <= 15000; epoch += 1000) {
+                    //train dan evaluasi
+                    c = new ANN(learnRate, nHidden, epoch);
+                    c.buildClassifier(insTrain);
+                    e = new Evaluation(insTest);
+                    e.evaluateModel(c, insTest);
+                    correct = (int) e.correct();
+                    //cetak hasil
+                    System.out.printf("%.2f %2d %5d = %3d\n", learnRate, nHidden, epoch, correct);
+                    if (correct >= maxCorrect) {
                         maxLearnRate = learnRate;
                         maxNHidden = nHidden;
                         maxEpoch = epoch;
-                        maxTrueAnswer = trueAnswer;
-                        String filename = String.format("M-%d-%.2f-%d-%d-CROSS.model", max, maxLearnRate, maxNHidden, maxEpoch);
-                        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(filename))) { //save model
+                        maxCorrect = correct;
+                        //save model terbaik
+                        modelname = String.format("%d-%d-%.2f-%d-%d.model",
+                            idxClass, maxCorrect, maxLearnRate, maxNHidden, maxEpoch);
+                        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(modelname))) {
                             oos.writeObject(c);
                             oos.flush();
                         }
                     }
-                    nHidden += 1;
                 }
-                epoch += 1000;
             }
-            learnRate += 0.05;
         }
         System.out.println("Finish " + new Date().toString());
         System.out.printf("Maksimum : %.2f %2d %5d = %3d dari %3d\n",
-            maxLearnRate, maxNHidden, maxEpoch, maxTrueAnswer, i.numInstances());
+            maxLearnRate, maxNHidden, maxEpoch, maxCorrect, insTrain.numInstances());
     }
 
     public static void main(String[] args) throws Exception {
