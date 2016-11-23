@@ -48,7 +48,7 @@ public class ANN extends AbstractClassifier implements Serializable {
                 }
             }
             //setiap beberapa epoch cek akurasinya
-            if (epoch % 500 == 0 || epoch == maxEpoch) {
+            if (epoch % 250 == 0 || epoch == maxEpoch) {
                 Evaluation e = new Evaluation(insTest);
                 e.evaluateModel(this, insTest);
                 int correct = (int) e.correct();
@@ -60,7 +60,7 @@ public class ANN extends AbstractClassifier implements Serializable {
                     for (int i = 0; i < nOutput; i++) {
                         maxOutNeuron[i] = new Neuron(outNeuron[i]);
                     }
-                    System.out.printf("%.2f %2d %5d = %3d\n", learnRate, nHidden, epoch, correct);
+                    System.out.printf("%.3f %2d %5d = %3d\n", learnRate, nHidden, epoch, correct);
                 }
                 //akurasi udah 100%
                 if (correct == insTest.numInstances()) {
@@ -119,7 +119,7 @@ public class ANN extends AbstractClassifier implements Serializable {
                 }
             }
             //setiap beberapa epoch cek akurasinya
-            if (epoch % 500 == 0 || epoch == maxEpoch) {
+            if (epoch % 250 == 0 || epoch == maxEpoch) {
                 Evaluation e = new Evaluation(insTest);
                 e.evaluateModel(this, insTest);
                 int correct = (int) e.correct();
@@ -136,7 +136,7 @@ public class ANN extends AbstractClassifier implements Serializable {
                     for (int i = 0; i < nOutput; i++) {
                         maxOutNeuron[i] = new Neuron(outNeuron[i]);
                     }
-                    System.out.printf("%.2f %2d %5d = %3d\n", learnRate, nHidden, epoch, correct);
+                    System.out.printf("%.3f %2d %5d = %3d\n", learnRate, nHidden, epoch, correct);
                 }
                 //akurasi udah 100%
                 if (correct == insTest.numInstances()) {

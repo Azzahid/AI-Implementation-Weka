@@ -86,7 +86,7 @@ public class Tester {
         //current variable
         double learnRate;
         int nHidden;
-        int epoch = 25000;
+        int epoch = 30000;
         int correct;
         //variabel saat nilai maksimum
         double maxLearnRate = -1;
@@ -100,8 +100,8 @@ public class Tester {
         //loop untuk mendapatkan parameter terbaik
         System.out.println("Learning rate, number of hidden neuron, number of epoch = correct answer");
         System.out.println("Start " + new Date().toString());
-        for (learnRate = 0.005; learnRate <= 0.016; learnRate += 0.005) { //3x
-            for (nHidden = 15; nHidden <= 25; nHidden++) { //11x
+        for (learnRate = 0.005; learnRate <= 0.016; learnRate += 0.005) {
+            for (nHidden = 10; nHidden <= 25; nHidden++) {
                 //train dan evaluasi
                 c = new ANN(learnRate, nHidden, epoch, insTest);
                 c.buildClassifier(insTrain);
@@ -116,7 +116,7 @@ public class Tester {
                     System.out.println(e.toSummaryString(true));
                     System.out.println(e.toMatrixString());
                     //save model terbaik
-                    modelname = String.format("%d-%d-%.2f-%d-%d.model",
+                    modelname = String.format("%d-%d-%.3f-%d-%d.model",
                         idxClass, maxCorrect, maxLearnRate, maxNHidden, epoch);
                     try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(modelname))) {
                         oos.writeObject(c);
@@ -126,7 +126,7 @@ public class Tester {
             }
         }
         System.out.println("Finish " + new Date().toString());
-        System.out.printf("Maksimum : %.2f %2d %5d = %3d dari %3d\n",
+        System.out.printf("Maksimum : %.3f %2d %5d = %3d dari %3d\n",
             maxLearnRate, maxNHidden, epoch, maxCorrect, insTest.numInstances());
     }
 
