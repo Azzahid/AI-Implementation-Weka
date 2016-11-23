@@ -17,7 +17,13 @@ public class Tester {
             System.out.println((j + 1) + ". " + i.attribute(j).name());
         }
         System.out.print("Select class index : ");
-        i.setClassIndex(s.nextInt() - 1);
+        int idxClass = s.nextInt() - 1;
+        i.setClassIndex(idxClass);
+        if (idxClass == 26) {
+            i.deleteAttributeAt(27);
+        } else if (idxClass == 27) {
+            i.deleteAttributeAt(26);
+        }
         return i;
     }
 
@@ -83,10 +89,10 @@ public class Tester {
         String modelname;
         Classifier c;
         Evaluation e;
+        int epoch = 30000;
         //current variable
         double learnRate;
         int nHidden;
-        int epoch = 30000;
         int correct;
         //variabel saat nilai maksimum
         double maxLearnRate = -1;
@@ -97,10 +103,22 @@ public class Tester {
         Instances insTest = new ConverterUtils.DataSource("stest.arff").getDataSet();
         insTrain.setClassIndex(idxClass);
         insTest.setClassIndex(idxClass);
+        switch (idxClass) { //delete atribut
+            case 26:
+                insTrain.deleteAttributeAt(27);
+                insTest.deleteAttributeAt(27);
+                break;
+            case 27:
+                insTrain.deleteAttributeAt(26);
+                insTest.deleteAttributeAt(26);
+                break;
+            default:
+                return;
+        }
         //loop untuk mendapatkan parameter terbaik
         System.out.println("Learning rate, number of hidden neuron, number of epoch = correct answer");
         System.out.println("Start " + new Date().toString());
-        for (learnRate = 0.005; learnRate <= 0.016; learnRate += 0.005) {
+        for (learnRate = 0.005; learnRate <= 0.016; learnRate += 0.005) { //0.016 supaya 0.015 masuk
             for (nHidden = 10; nHidden <= 25; nHidden++) {
                 //train dan evaluasi
                 c = new ANN(learnRate, nHidden, epoch, insTest);
