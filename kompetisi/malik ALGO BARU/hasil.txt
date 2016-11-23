@@ -1,0 +1,577 @@
+run:
+Learning rate: 0,01
+Hidden layer: 1
+Hidden neuron: 10
+Maximum epoch: 10000
+
+iris.arff_class_FULL-TRAINING_148
+=== Summary ===
+
+Correctly Classified Instances         148               98.6667 %
+Incorrectly Classified Instances         2                1.3333 %
+Kappa statistic                          0.98  
+K&B Relative Info Score              14726.186  %
+K&B Information Score                  233.4045 bits      1.556  bits/instance
+Class complexity | order 0             237.7444 bits      1.585  bits/instance
+Class complexity | scheme             2148      bits     14.32   bits/instance
+Complexity improvement     (Sf)      -1910.2556 bits    -12.735  bits/instance
+Mean absolute error                      0.0089
+Root mean squared error                  0.0943
+Relative absolute error                  2      %
+Root relative squared error             20      %
+Total Number of Instances              150     
+
+=== Confusion Matrix ===
+
+  a  b  c   <-- classified as
+ 50  0  0 |  a = Iris-setosa
+  0 49  1 |  b = Iris-versicolor
+  0  1 49 |  c = Iris-virginica
+
+iris.arff_class_10-FOLD-CROSS-VALIDATION_146
+=== Summary ===
+
+Correctly Classified Instances         146               97.3333 %
+Incorrectly Classified Instances         4                2.6667 %
+Kappa statistic                          0.96  
+K&B Relative Info Score              14452.3719 %
+K&B Information Score                  229.0647 bits      1.5271 bits/instance
+Class complexity | order 0             237.7444 bits      1.585  bits/instance
+Class complexity | scheme             4296      bits     28.64   bits/instance
+Complexity improvement     (Sf)      -4058.2556 bits    -27.055  bits/instance
+Mean absolute error                      0.0178
+Root mean squared error                  0.1333
+Relative absolute error                  4      %
+Root relative squared error             28.2843 %
+Total Number of Instances              150     
+
+=== Confusion Matrix ===
+
+  a  b  c   <-- classified as
+ 50  0  0 |  a = Iris-setosa
+  0 47  3 |  b = Iris-versicolor
+  0  1 49 |  c = Iris-virginica
+
+iris.arff_class_80%-SPLIT-TEST_30
+=== Summary ===
+
+Correctly Classified Instances          30              100      %
+Incorrectly Classified Instances         0                0      %
+Kappa statistic                          1     
+K&B Relative Info Score               2993.8522 %
+K&B Information Score                   46.9728 bits      1.5658 bits/instance
+Class complexity | order 0              46.9728 bits      1.5658 bits/instance
+Class complexity | scheme                0      bits      0      bits/instance
+Complexity improvement     (Sf)         46.9728 bits      1.5658 bits/instance
+Mean absolute error                      0     
+Root mean squared error                  0     
+Relative absolute error                  0      %
+Root relative squared error              0      %
+Total Number of Instances               30     
+
+=== Confusion Matrix ===
+
+  a  b  c   <-- classified as
+ 10  0  0 |  a = Iris-setosa
+  0  8  0 |  b = Iris-versicolor
+  0  0 12 |  c = Iris-virginica
+
+ttrain.arff_LabelSport_FULL-TRAINING_144
+=== Summary ===
+
+Correctly Classified Instances         144               71.2871 %
+Incorrectly Classified Instances        58               28.7129 %
+Kappa statistic                          0.6721
+K&B Relative Info Score              13837.8034 %
+K&B Information Score                  440.7682 bits      2.182  bits/instance
+Class complexity | order 0             640.3556 bits      3.1701 bits/instance
+Class complexity | scheme            62292      bits    308.3762 bits/instance
+Complexity improvement     (Sf)     -61651.6444 bits   -305.2062 bits/instance
+Mean absolute error                      0.0574
+Root mean squared error                  0.2396
+Relative absolute error                 32.5618 %
+Root relative squared error             80.7386 %
+Total Number of Instances              202     
+
+=== Confusion Matrix ===
+
+  a  b  c  d  e  f  g  h  i  j   <-- classified as
+ 16  2  4  1  0  1  0  0  1  0 |  a = b_ball
+  0 29  3  1  1  0  0  0  1  2 |  b = row
+  2  0 21  0  0  0  0  0  0  0 |  c = netball
+  1  8  0  7  0  3  2  0  1  0 |  d = swim
+  0  1  0  2 14  0  1  1  0  0 |  e = field
+  0  0  0  2  0 27  0  0  0  0 |  f = t_400m
+  0  2  0  0  0  4  9  0  0  0 |  g = t_sprnt
+  0  2  0  0  0  1  0  7  1  0 |  h = tennis
+  0  2  0  0  1  2  0  1 11  0 |  i = w_polo
+  0  0  0  0  0  0  0  1  0  3 |  j = gym
+
+ttrain.arff_LabelSport_10-FOLD-CROSS-VALIDATION_100
+=== Summary ===
+
+Correctly Classified Instances         100               49.505  %
+Incorrectly Classified Instances       102               50.495  %
+Kappa statistic                          0.4225
+K&B Relative Info Score               9033.2903 %
+K&B Information Score                  286.8095 bits      1.4198 bits/instance
+Class complexity | order 0             642.4065 bits      3.1802 bits/instance
+Class complexity | scheme           109548      bits    542.3168 bits/instance
+Complexity improvement     (Sf)    -108905.5935 bits   -539.1366 bits/instance
+Mean absolute error                      0.101 
+Root mean squared error                  0.3178
+Relative absolute error                 57.2277 %
+Root relative squared error            107.0094 %
+Total Number of Instances              202     
+
+=== Confusion Matrix ===
+
+  a  b  c  d  e  f  g  h  i  j   <-- classified as
+ 11  3  7  2  0  2  0  0  0  0 |  a = b_ball
+  2 25  0  3  1  1  0  1  3  1 |  b = row
+  3  2 16  0  0  1  0  1  0  0 |  c = netball
+  3  9  0  1  0  5  2  2  0  0 |  d = swim
+  0  3  0  1 10  0  1  1  3  0 |  e = field
+  0  1  1  2  0 19  4  1  1  0 |  f = t_400m
+  0  1  0  1  1  4  7  0  1  0 |  g = t_sprnt
+  0  1  2  0  0  2  2  2  1  1 |  h = tennis
+  1  2  0  1  2  2  0  0  9  0 |  i = w_polo
+  0  0  0  0  0  3  0  1  0  0 |  j = gym
+
+ttrain.arff_LabelSport_80%-SPLIT-TEST_17
+=== Summary ===
+
+Correctly Classified Instances          17               41.4634 %
+Incorrectly Classified Instances        24               58.5366 %
+Kappa statistic                          0.3232
+K&B Relative Info Score               1438.3643 %
+K&B Information Score                   45.1633 bits      1.1015 bits/instance
+Class complexity | order 0             124.6577 bits      3.0404 bits/instance
+Class complexity | scheme            25776      bits    628.6829 bits/instance
+Complexity improvement     (Sf)     -25651.3423 bits   -625.6425 bits/instance
+Mean absolute error                      0.1171
+Root mean squared error                  0.3422
+Relative absolute error                 67.2158 %
+Root relative squared error            116.3267 %
+Total Number of Instances               41     
+
+=== Confusion Matrix ===
+
+ a b c d e f g h i j   <-- classified as
+ 1 0 1 0 0 1 0 0 0 0 | a = b_ball
+ 0 2 2 0 0 0 0 0 2 1 | b = row
+ 2 1 4 0 0 0 0 0 0 0 | c = netball
+ 1 0 0 1 0 1 0 0 0 0 | d = swim
+ 0 1 0 0 1 2 0 0 1 0 | e = field
+ 1 0 0 0 0 6 1 0 0 0 | f = t_400m
+ 0 0 0 0 0 1 0 0 1 0 | g = t_sprnt
+ 0 0 1 0 0 2 1 0 0 0 | h = tennis
+ 0 0 0 0 0 0 0 0 2 0 | i = w_polo
+ 0 0 0 0 0 0 0 0 0 0 | j = gym
+
+ttest.arff_LabelSport_FULL-TRAINING_76
+=== Summary ===
+
+Correctly Classified Instances          76               71.028  %
+Incorrectly Classified Instances        31               28.972  %
+Kappa statistic                          0.6677
+K&B Relative Info Score               7228.6109 %
+K&B Information Score                  229.5828 bits      2.1456 bits/instance
+Class complexity | order 0             336.7027 bits      3.1468 bits/instance
+Class complexity | scheme            33294      bits    311.1589 bits/instance
+Complexity improvement     (Sf)     -32957.2973 bits   -308.0121 bits/instance
+Mean absolute error                      0.0579
+Root mean squared error                  0.2407
+Relative absolute error                 32.9518 %
+Root relative squared error             81.2631 %
+Total Number of Instances              107     
+
+=== Confusion Matrix ===
+
+  a  b  c  d  e  f  g  h  i  j   <-- classified as
+  2  2  2  1  0  0  0  0  0  0 |  a = b_ball
+  0 15  1  0  0  0  0  0  1  1 |  b = row
+  1  1 13  0  0  0  0  0  0  1 |  c = netball
+  0  2  1 10  0  3  0  0  1  0 |  d = swim
+  0  0  0  1  6  1  0  1  0  0 |  e = field
+  0  0  0  1  0 13  0  0  0  0 |  f = t_400m
+  0  1  0  1  0  2  4  0  0  0 |  g = t_sprnt
+  0  0  0  1  0  1  0  2  0  0 |  h = tennis
+  0  0  0  0  1  2  0  0  8  0 |  i = w_polo
+  0  0  0  0  0  0  0  0  0  3 |  j = gym
+
+ttest.arff_LabelSport_10-FOLD-CROSS-VALIDATION_59
+=== Summary ===
+
+Correctly Classified Instances          59               55.1402 %
+Incorrectly Classified Instances        48               44.8598 %
+Kappa statistic                          0.4851
+K&B Relative Info Score               5404.8655 %
+K&B Information Score                  172.4358 bits      1.6115 bits/instance
+Class complexity | order 0             340.2475 bits      3.1799 bits/instance
+Class complexity | scheme            51552      bits    481.7944 bits/instance
+Complexity improvement     (Sf)     -51211.7525 bits   -478.6145 bits/instance
+Mean absolute error                      0.0897
+Root mean squared error                  0.2995
+Relative absolute error                 50.9174 %
+Root relative squared error            100.9214 %
+Total Number of Instances              107     
+
+=== Confusion Matrix ===
+
+  a  b  c  d  e  f  g  h  i  j   <-- classified as
+  4  1  1  1  0  0  0  0  0  0 |  a = b_ball
+  0  9  1  4  0  0  0  0  3  1 |  b = row
+  1  1 13  0  0  1  0  0  0  0 |  c = netball
+  0  2  2  7  0  3  2  0  1  0 |  d = swim
+  0  0  0  1  5  0  1  0  2  0 |  e = field
+  0  0  0  2  0 11  1  0  0  0 |  f = t_400m
+  0  0  0  3  0  3  2  0  0  0 |  g = t_sprnt
+  0  0  0  0  0  1  1  1  1  0 |  h = tennis
+  0  1  0  1  1  1  0  0  7  0 |  i = w_polo
+  0  0  0  0  0  3  0  0  0  0 |  j = gym
+
+ttest.arff_LabelSport_80%-SPLIT-TEST_14
+=== Summary ===
+
+Correctly Classified Instances          14               63.6364 %
+Incorrectly Classified Instances         8               36.3636 %
+Kappa statistic                          0.5897
+K&B Relative Info Score               1332.225  %
+K&B Information Score                   42.8313 bits      1.9469 bits/instance
+Class complexity | order 0              68.3724 bits      3.1078 bits/instance
+Class complexity | scheme             8592      bits    390.5455 bits/instance
+Complexity improvement     (Sf)      -8523.6276 bits   -387.4376 bits/instance
+Mean absolute error                      0.0727
+Root mean squared error                  0.2697
+Relative absolute error                 41.2903 %
+Root relative squared error             91.187  %
+Total Number of Instances               22     
+
+=== Confusion Matrix ===
+
+ a b c d e f g h i j   <-- classified as
+ 0 1 2 0 0 0 0 0 0 0 | a = b_ball
+ 0 2 0 0 0 0 0 0 0 0 | b = row
+ 0 0 3 0 0 0 0 0 0 0 | c = netball
+ 0 0 0 0 1 0 2 0 0 0 | d = swim
+ 0 0 0 0 2 0 0 0 0 0 | e = field
+ 0 0 0 0 0 4 0 0 0 0 | f = t_400m
+ 0 0 0 0 0 0 1 0 0 0 | g = t_sprnt
+ 0 0 0 0 0 0 0 0 0 0 | h = tennis
+ 0 1 0 1 0 0 0 0 1 0 | i = w_polo
+ 0 0 0 0 0 0 0 0 0 1 | j = gym
+
+strain.arff_Dalc_FULL-TRAINING_547
+=== Summary ===
+
+Correctly Classified Instances         547               84.2835 %
+Incorrectly Classified Instances       102               15.7165 %
+Kappa statistic                          0.615 
+K&B Relative Info Score              34042.048  %
+K&B Information Score                  465.5302 bits      0.7173 bits/instance
+Class complexity | order 0             877.1394 bits      1.3515 bits/instance
+Class complexity | scheme           109548      bits    168.7951 bits/instance
+Complexity improvement     (Sf)    -108670.8606 bits   -167.4435 bits/instance
+Mean absolute error                      0.0629
+Root mean squared error                  0.2507
+Relative absolute error                 32.8081 %
+Root relative squared error             81.2121 %
+Total Number of Instances              649     
+
+=== Confusion Matrix ===
+
+   a   b   c   d   e   <-- classified as
+ 447   4   0   0   0 |   a = 1
+  23  98   0   0   0 |   b = 2
+  31  10   1   1   0 |   c = 3
+  10   6   0   1   0 |   d = 4
+   8   6   3   0   0 |   e = 5
+
+strain.arff_Dalc_10-FOLD-CROSS-VALIDATION_403
+=== Summary ===
+
+Correctly Classified Instances         403               62.0955 %
+Incorrectly Classified Instances       246               37.9045 %
+Kappa statistic                          0.1094
+K&B Relative Info Score               8570.0409 %
+K&B Information Score                  117.8608 bits      0.1816 bits/instance
+Class complexity | order 0             877.6381 bits      1.3523 bits/instance
+Class complexity | scheme           264204      bits    407.094  bits/instance
+Complexity improvement     (Sf)    -263326.3619 bits   -405.7417 bits/instance
+Mean absolute error                      0.1516
+Root mean squared error                  0.3894
+Relative absolute error                 79.0769 %
+Root relative squared error            126.1144 %
+Total Number of Instances              649     
+
+=== Confusion Matrix ===
+
+   a   b   c   d   e   <-- classified as
+ 369  74   8   0   0 |   a = 1
+  86  27   6   0   2 |   b = 2
+  24  12   7   0   0 |   c = 3
+  11   5   1   0   0 |   d = 4
+  11   6   0   0   0 |   e = 5
+
+strain.arff_Dalc_80%-SPLIT-TEST_90
+=== Summary ===
+
+Correctly Classified Instances          90               69.2308 %
+Incorrectly Classified Instances        40               30.7692 %
+Kappa statistic                          0.2017
+K&B Relative Info Score               2976.5234 %
+K&B Information Score                   41.5175 bits      0.3194 bits/instance
+Class complexity | order 0             171.5761 bits      1.3198 bits/instance
+Class complexity | scheme            42960      bits    330.4615 bits/instance
+Complexity improvement     (Sf)     -42788.4239 bits   -329.1417 bits/instance
+Mean absolute error                      0.1231
+Root mean squared error                  0.3508
+Relative absolute error                 65.6615 %
+Root relative squared error            116.1272 %
+Total Number of Instances              130     
+
+=== Confusion Matrix ===
+
+  a  b  c  d  e   <-- classified as
+ 83  9  1  0  0 |  a = 1
+ 16  5  0  0  0 |  b = 2
+  3  4  2  0  0 |  c = 3
+  3  0  1  0  0 |  d = 4
+  2  1  0  0  0 |  e = 5
+
+strain.arff_Walc_FULL-TRAINING_380
+=== Summary ===
+
+Correctly Classified Instances         380               58.5516 %
+Incorrectly Classified Instances       269               41.4484 %
+Kappa statistic                          0.4273
+K&B Relative Info Score              30908.0435 %
+K&B Information Score                  657.6806 bits      1.0134 bits/instance
+Class complexity | order 0            1378.9507 bits      2.1247 bits/instance
+Class complexity | scheme           288906      bits    445.1556 bits/instance
+Complexity improvement     (Sf)    -287527.0493 bits   -443.0309 bits/instance
+Mean absolute error                      0.1658
+Root mean squared error                  0.4072
+Relative absolute error                 55.621  %
+Root relative squared error            105.501  %
+Total Number of Instances              649     
+
+=== Confusion Matrix ===
+
+   a   b   c   d   e   <-- classified as
+ 186  30  25   4   2 |   a = 1
+  55  74  18   2   1 |   b = 2
+  40  26  44   8   2 |   c = 3
+  15   5   8  59   0 |   d = 4
+   8   6   5   9  17 |   e = 5
+
+strain.arff_Walc_10-FOLD-CROSS-VALIDATION_216
+=== Summary ===
+
+Correctly Classified Instances         216               33.282  %
+Incorrectly Classified Instances       433               66.718  %
+Kappa statistic                          0.0797
+K&B Relative Info Score              10523.2502 %
+K&B Information Score                  223.9751 bits      0.3451 bits/instance
+Class complexity | order 0            1379.0968 bits      2.125  bits/instance
+Class complexity | scheme           465042      bits    716.5516 bits/instance
+Complexity improvement     (Sf)    -463662.9032 bits   -714.4267 bits/instance
+Mean absolute error                      0.2669
+Root mean squared error                  0.5166
+Relative absolute error                 89.5236 %
+Root relative squared error            133.8486 %
+Total Number of Instances              649     
+
+=== Confusion Matrix ===
+
+   a   b   c   d   e   <-- classified as
+ 129  63  29  22   4 |   a = 1
+  71  48  14  13   4 |   b = 2
+  63  25  14  14   4 |   c = 3
+  22  22  15  20   8 |   d = 4
+  10  12   4  14   5 |   e = 5
+
+strain.arff_Walc_80%-SPLIT-TEST_54
+=== Summary ===
+
+Correctly Classified Instances          54               41.5385 %
+Incorrectly Classified Instances        76               58.4615 %
+Kappa statistic                          0.2095
+K&B Relative Info Score               3527.0273 %
+K&B Information Score                   75.3164 bits      0.5794 bits/instance
+Class complexity | order 0             275.5539 bits      2.1196 bits/instance
+Class complexity | scheme            81624      bits    627.8769 bits/instance
+Complexity improvement     (Sf)     -81348.4461 bits   -625.7573 bits/instance
+Mean absolute error                      0.2338
+Root mean squared error                  0.4836
+Relative absolute error                 77.8098 %
+Root relative squared error            124.8975 %
+Total Number of Instances              130     
+
+=== Confusion Matrix ===
+
+  a  b  c  d  e   <-- classified as
+ 28  5  4  5  0 |  a = 1
+ 15 14  7  1  0 |  b = 2
+ 14  2  6  6  1 |  c = 3
+  5  2  2  5  0 |  d = 4
+  1  0  1  5  1 |  e = 5
+
+stest.arff_Dalc_FULL-TRAINING_369
+=== Summary ===
+
+Correctly Classified Instances         369               93.4177 %
+Incorrectly Classified Instances        26                6.5823 %
+Kappa statistic                          0.8501
+K&B Relative Info Score              30223.9129 %
+K&B Information Score                  408.3046 bits      1.0337 bits/instance
+Class complexity | order 0             522.914  bits      1.3238 bits/instance
+Class complexity | scheme            27924      bits     70.6937 bits/instance
+Complexity improvement     (Sf)     -27401.086  bits    -69.3698 bits/instance
+Mean absolute error                      0.0263
+Root mean squared error                  0.1623
+Relative absolute error                 13.873  %
+Root relative squared error             52.9017 %
+Total Number of Instances              395     
+
+=== Confusion Matrix ===
+
+   a   b   c   d   e   <-- classified as
+ 275   1   0   0   0 |   a = 1
+   4  71   0   0   0 |   b = 2
+   5   3  18   0   0 |   c = 3
+   6   2   0   1   0 |   d = 4
+   4   1   0   0   4 |   e = 5
+
+stest.arff_Dalc_10-FOLD-CROSS-VALIDATION_250
+=== Summary ===
+
+Correctly Classified Instances         250               63.2911 %
+Incorrectly Classified Instances       145               36.7089 %
+Kappa statistic                          0.1497
+K&B Relative Info Score               5503.7711 %
+K&B Information Score                   74.4694 bits      0.1885 bits/instance
+Class complexity | order 0             523.4416 bits      1.3252 bits/instance
+Class complexity | scheme           155730      bits    394.2532 bits/instance
+Complexity improvement     (Sf)    -155206.5584 bits   -392.928  bits/instance
+Mean absolute error                      0.1468
+Root mean squared error                  0.3832
+Relative absolute error                 77.2857 %
+Root relative squared error            124.9123 %
+Total Number of Instances              395     
+
+=== Confusion Matrix ===
+
+   a   b   c   d   e   <-- classified as
+ 225  47   4   0   0 |   a = 1
+  47  25   3   0   0 |   b = 2
+  15  10   0   0   1 |   c = 3
+   4   3   2   0   0 |   d = 4
+   6   0   3   0   0 |   e = 5
+
+stest.arff_Dalc_80%-SPLIT-TEST_54
+=== Summary ===
+
+Correctly Classified Instances          54               68.3544 %
+Incorrectly Classified Instances        25               31.6456 %
+Kappa statistic                          0.3296
+K&B Relative Info Score               2652.8371 %
+K&B Information Score                   40.9701 bits      0.5186 bits/instance
+Class complexity | order 0             113.6964 bits      1.4392 bits/instance
+Class complexity | scheme            26850      bits    339.8734 bits/instance
+Complexity improvement     (Sf)     -26736.3036 bits   -338.4342 bits/instance
+Mean absolute error                      0.1266
+Root mean squared error                  0.3558
+Relative absolute error                 58.8895 %
+Root relative squared error            110.1399 %
+Total Number of Instances               79     
+
+=== Confusion Matrix ===
+
+  a  b  c  d  e   <-- classified as
+ 43  8  0  0  0 |  a = 1
+ 10  9  0  0  0 |  b = 2
+  1  1  2  0  0 |  c = 3
+  1  2  0  0  0 |  d = 4
+  2  0  0  0  0 |  e = 5
+
+stest.arff_Walc_FULL-TRAINING_299
+=== Summary ===
+
+Correctly Classified Instances         299               75.6962 %
+Incorrectly Classified Instances        96               24.3038 %
+Kappa statistic                          0.6656
+K&B Relative Info Score              26605.0012 %
+K&B Information Score                  566.9303 bits      1.4353 bits/instance
+Class complexity | order 0             839.7197 bits      2.1259 bits/instance
+Class complexity | scheme           103104      bits    261.0228 bits/instance
+Complexity improvement     (Sf)    -102264.2803 bits   -258.8969 bits/instance
+Mean absolute error                      0.0972
+Root mean squared error                  0.3118
+Relative absolute error                 32.5993 %
+Root relative squared error             80.7825 %
+Total Number of Instances              395     
+
+=== Confusion Matrix ===
+
+   a   b   c   d   e   <-- classified as
+ 141   9   1   0   0 |   a = 1
+  11  65   7   1   1 |   b = 2
+  14  15  49   1   1 |   c = 3
+   9   3   9  28   2 |   d = 4
+   2   2   5   3  16 |   e = 5
+
+stest.arff_Walc_10-FOLD-CROSS-VALIDATION_140
+=== Summary ===
+
+Correctly Classified Instances         140               35.443  %
+Incorrectly Classified Instances       255               64.557  %
+Kappa statistic                          0.1067
+K&B Relative Info Score               7256.9136 %
+K&B Information Score                  154.622  bits      0.3914 bits/instance
+Class complexity | order 0             839.8932 bits      2.1263 bits/instance
+Class complexity | scheme           273870      bits    693.3418 bits/instance
+Complexity improvement     (Sf)    -273030.1068 bits   -691.2155 bits/instance
+Mean absolute error                      0.2582
+Root mean squared error                  0.5082
+Relative absolute error                 86.5786 %
+Root relative squared error            131.6516 %
+Total Number of Instances              395     
+
+=== Confusion Matrix ===
+
+  a  b  c  d  e   <-- classified as
+ 82 33 23  9  4 |  a = 1
+ 37 28 13  6  1 |  b = 2
+ 36 18 20  6  0 |  c = 3
+ 14 11 15  9  2 |  d = 4
+  9  7  5  6  1 |  e = 5
+
+stest.arff_Walc_80%-SPLIT-TEST_29
+=== Summary ===
+
+Correctly Classified Instances          29               36.7089 %
+Incorrectly Classified Instances        50               63.2911 %
+Kappa statistic                          0.1271
+K&B Relative Info Score               1471.4278 %
+K&B Information Score                   31.7753 bits      0.4022 bits/instance
+Class complexity | order 0             168.9569 bits      2.1387 bits/instance
+Class complexity | scheme            53700      bits    679.7468 bits/instance
+Complexity improvement     (Sf)     -53531.0431 bits   -677.6081 bits/instance
+Mean absolute error                      0.2532
+Root mean squared error                  0.5032
+Relative absolute error                 84.507  %
+Root relative squared error            130.27   %
+Total Number of Instances               79     
+
+=== Confusion Matrix ===
+
+  a  b  c  d  e   <-- classified as
+ 21  4  3  3  0 |  a = 1
+  5  3  4  1  0 |  b = 2
+  6  2  3  4  0 |  c = 3
+  3  2  6  2  1 |  d = 4
+  1  1  2  2  0 |  e = 5
+
+BUILD SUCCESSFUL (total time: 9 minutes 37 seconds)
