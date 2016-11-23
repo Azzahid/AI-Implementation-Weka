@@ -147,10 +147,99 @@ public class Tester {
         System.out.printf("Maksimum : %.3f %2d %5d = %3d dari %3d\n",
             maxLearnRate, maxNHidden, epoch, maxCorrect, insTest.numInstances());
     }
+    
+    private static void saveModel(Classifier c, String namafile) throws Exception {
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(namafile))) {
+            oos.writeObject(c);
+            oos.flush();
+        }
+    }
+    
+    private static void fullTraining(String name, Classifier c, Instances i) throws Exception {
+        c.buildClassifier(i);
+        Evaluation e = new Evaluation(i);
+        e.evaluateModel(c, i);
+        String namafile = String.format("%s_%s_FULL-TRAINING_%d", name, i.classAttribute().name(), (int) e.correct());
+        System.out.println(namafile);
+        System.out.println(e.toSummaryString(true));
+        System.out.println(e.toMatrixString());
+        saveModel(c, namafile + ".model");
+    }
+    
+    private static void crossValidation(String name, Classifier c, Instances i) throws Exception {
+        Evaluation e = new Evaluation(i);
+        e.crossValidateModel(c, i, 10, new Random(1));
+        String namafile = String.format("%s_%s_10-FOLD-CROSS-VALIDATION_%d", name, i.classAttribute().name(), (int) e.correct());
+        System.out.println(namafile);
+        System.out.println(e.toSummaryString(true));
+        System.out.println(e.toMatrixString());
+        saveModel(c, namafile + ".model");
+    }
+    
+    private static void splitTest(String name, Instances i,
+        double LR, int NH, int ME) throws Exception {
+        i.randomize(new Random(0));
+        int persen = 80;
+        int trainSize = (int) Math.round(i.numInstances() * persen / 100);
+        int testSize = i.numInstances() - trainSize;
+        Instances iTrain = new Instances(i, 0, trainSize);
+        iTrain.setClassIndex(i.classIndex());
+        Instances iTest = new Instances(i, trainSize, testSize);
+        iTest.setClassIndex(i.classIndex());
+        Classifier c = new ANN(LR, NH, ME, iTest);
+        c.buildClassifier(iTrain);
+        Evaluation e = new Evaluation(iTest);
+        e.evaluateModel(c, iTest);
+        String namafile = String.format("%s_%s_%d%%-SPLIT-TEST_%d", name, i.classAttribute().name(), persen, (int) e.correct());
+        System.out.println(namafile);
+        System.out.println(e.toSummaryString(true));
+        System.out.println(e.toMatrixString());
+        saveModel(c, namafile + ".model");
+    }
+    
+    private static void hihihi(String name, int idxClass, int idxDel,
+        double LR, int NH, int ME) throws Exception {
+        Instances i = new ConverterUtils.DataSource(name).getDataSet();
+        i.setClassIndex(idxClass);
+        if (idxDel != -1) {
+            i.deleteAttributeAt(idxDel);
+        }
+        Classifier c = new ANN(LR, NH, ME, i);
+        fullTraining(name, c, i);
+        crossValidation(name, c, i);
+        splitTest(name, i, LR, NH, ME);
+    }
+
+    private static void lalala() throws Exception {
+        Scanner s = new Scanner(System.in);
+        System.out.print("Learning rate: "); double LR = s.nextDouble();
+        System.out.print("Hidden layer: ");
+        int NH;
+        switch (s.nextInt()) {
+            case 0:
+                NH = 0;
+                break;
+            case 1:
+                System.out.print("Hidden neuron: "); NH = s.nextInt();
+                break;
+            default:
+                return;
+        }
+        System.out.print("Maximum epoch: "); int ME = s.nextInt();
+        System.out.println();
+        hihihi("iris.arff", 4, -1, LR, NH, ME);
+        hihihi("ttrain.arff", 12, -1, LR, NH, ME);
+        hihihi("ttest.arff", 12, -1, LR, NH, ME);
+        hihihi("strain.arff", 26, 27, LR, NH, ME);
+        hihihi("strain.arff", 27, 26, LR, NH, ME);
+        hihihi("stest.arff", 26, 27, LR, NH, ME);
+        hihihi("stest.arff", 27, 26, LR, NH, ME);
+    }
 
     public static void main(String[] args) throws Exception {
         Thread.currentThread().setPriority(Thread.MAX_PRIORITY); //biar cepet
-        experiment(Integer.parseInt(args[0])); System.exit(0); //komentari baris ini jika mau test manual
+        //experiment(Integer.parseInt(args[0])); System.exit(0); //komentari baris ini jika mau test manual
+        lalala(); System.exit(0); //komentari baris ini jika mau test manual
         Scanner s = new Scanner(System.in);
         Instances i = getInstances(s);
         Classifier c = getClassifier(s, i);
