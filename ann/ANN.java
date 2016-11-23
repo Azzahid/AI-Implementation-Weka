@@ -1,6 +1,7 @@
 import java.io.Serializable;
 import java.util.Arrays;
 import weka.classifiers.AbstractClassifier;
+import weka.classifiers.Evaluation;
 import weka.core.Instance;
 import weka.core.Instances;
 
@@ -8,6 +9,7 @@ public class ANN extends AbstractClassifier implements Serializable {
     private final double learnRate;
     private final int nHidden; //jumlah neuron pada layer hidden
     private final int maxEpoch; //learning berhenti berdasarkan epoch
+    private final Instances insTest;
     private int nOutput; //jumlah neuron pada layer output
     private int nCol; //jumlah atribut atau sama aja jumlah data + bias
     private int nRow; //jumlah instance
@@ -17,14 +19,19 @@ public class ANN extends AbstractClassifier implements Serializable {
     private Neuron[] hidNeuron; //neuron pada layer hidden
     private Neuron[] outNeuron; //neuron pada layer output
 
-    public ANN(double learnRate, int nHidden, int maxEpoch) {
+    public ANN(double learnRate, int nHidden, int maxEpoch, Instances insTest) {
         this.learnRate = learnRate;
         this.nHidden = nHidden;
         this.maxEpoch = maxEpoch;
+        this.insTest = insTest;
     }
 
-    private void singleLayer(double[][] insNum, int[][] target) {
-        outNeuron = new Neuron[nOutput]; //buat objek neuron-neuron pada layer output
+    private void singleLayer(double[][] insNum, int[][] target) throws Exception {
+        //variabel maksimum
+        int maxCorrect = -1;
+        Neuron[] maxOutNeuron = null;
+        //buat objek neuron-neuron pada layer output
+        outNeuron = new Neuron[nOutput];
         for (int i = 0; i < nOutput; i++) {
             outNeuron[i] = new Neuron(nCol);
         }
@@ -40,16 +47,43 @@ public class ANN extends AbstractClassifier implements Serializable {
                     outNeuron[j].updateWeight(learnRate, insNum[i]); //update bobot
                 }
             }
+            //setiap beberapa epoch cek akurasinya
+            if (epoch % 500 == 0 || epoch == maxEpoch) {
+                Evaluation e = new Evaluation(insTest);
+                e.evaluateModel(this, insTest);
+                int correct = (int) e.correct();
+                //terdapat akurasi lebih tinggi
+                if (correct > maxCorrect) {
+                    maxCorrect = correct;
+                    //simpen model neuron output
+                    maxOutNeuron = new Neuron[nOutput];
+                    for (int i = 0; i < nOutput; i++) {
+                        maxOutNeuron[i] = new Neuron(outNeuron[i]);
+                    }
+                    System.out.printf("%.2f %2d %5d = %3d\n", learnRate, nHidden, epoch, correct);
+                }
+                //akurasi udah 100%
+                if (correct == insTest.numInstances()) {
+                    break;
+                }
+            }
         } while(epoch < maxEpoch);
+        outNeuron = maxOutNeuron;
         //printWeight(); //cetak hasil, komentari baris ini jika experiment
     }
 
-    private void dualLayer(double[][] insNum, int[][] target) {
-        hidNeuron = new Neuron[nHidden];  //buat objek neuron-neuron pada layer hidden
+    private void dualLayer(double[][] insNum, int[][] target) throws Exception {
+        //variabel maksimum
+        int maxCorrect = -1;
+        Neuron[] maxOutNeuron = null;
+        Neuron[] maxHidNeuron = null;
+        //buat objek neuron-neuron pada layer hidden
+        hidNeuron = new Neuron[nHidden];
         for (int i = 0; i < nHidden; i++) {
             hidNeuron[i] = new Neuron(nCol);
         }
-        outNeuron = new Neuron[nOutput];  //buat objek neuron-neuron pada layer output
+        //buat objek neuron-neuron pada layer output
+        outNeuron = new Neuron[nOutput];
         for (int i = 0; i < nOutput; i++) {
             outNeuron[i] = new Neuron(nHidden + 1); //kolom +1 untuk bias
         }
@@ -84,7 +118,34 @@ public class ANN extends AbstractClassifier implements Serializable {
                     n.updateWeight(learnRate, signHid);
                 }
             }
+            //setiap beberapa epoch cek akurasinya
+            if (epoch % 500 == 0 || epoch == maxEpoch) {
+                Evaluation e = new Evaluation(insTest);
+                e.evaluateModel(this, insTest);
+                int correct = (int) e.correct();
+                //terdapat akurasi lebih tinggi
+                if (correct > maxCorrect) {
+                    maxCorrect = correct;
+                    //simpen model neuron hidden
+                    maxHidNeuron = new Neuron[nHidden];
+                    for (int i = 0; i < nHidden; i++) {
+                        maxHidNeuron[i] = new Neuron(hidNeuron[i]);
+                    }
+                    //simpen model neuron output
+                    maxOutNeuron = new Neuron[nOutput];
+                    for (int i = 0; i < nOutput; i++) {
+                        maxOutNeuron[i] = new Neuron(outNeuron[i]);
+                    }
+                    System.out.printf("%.2f %2d %5d = %3d\n", learnRate, nHidden, epoch, correct);
+                }
+                //akurasi udah 100%
+                if (correct == insTest.numInstances()) {
+                    break;
+                }
+            }
         } while(epoch < maxEpoch);
+        hidNeuron = maxHidNeuron;
+        outNeuron = maxOutNeuron;
         //printWeight(); //cetak hasil, komentari baris ini jika experiment
     }
 

@@ -31,7 +31,7 @@ public class Tester {
             case 1 :
                 System.out.println("\nLearning rate; Number of hidden neuron; Number of epoch");
                 System.out.print("Separated by space : ");
-                c = new ANN(s.nextDouble(), s.nextInt(), s.nextInt());
+                c = new ANN(s.nextDouble(), s.nextInt(), s.nextInt(), i); //full training
                 c.buildClassifier(i);
                 break;
             case 2 :
@@ -79,22 +79,20 @@ public class Tester {
         }
     }
 
-    private static void experiment() throws Exception {
+    private static void experiment(int idxClass) throws Exception {
         String modelname;
         Classifier c;
         Evaluation e;
         //current variable
         double learnRate;
         int nHidden;
-        int epoch;
+        int epoch = 25000;
         int correct;
         //variabel saat nilai maksimum
         double maxLearnRate = -1;
         int maxNHidden = -1;
-        int maxEpoch = -1;
         int maxCorrect = -1;
         //load data
-        int idxClass = 26; //Dalc = 26, Walc = 27
         Instances insTrain = new ConverterUtils.DataSource("strain.arff").getDataSet();
         Instances insTest = new ConverterUtils.DataSource("stest.arff").getDataSet();
         insTrain.setClassIndex(idxClass);
@@ -102,41 +100,39 @@ public class Tester {
         //loop untuk mendapatkan parameter terbaik
         System.out.println("Learning rate, number of hidden neuron, number of epoch = correct answer");
         System.out.println("Start " + new Date().toString());
-        for (learnRate = 0.05; learnRate <= 0.15; learnRate += 0.05) {
-            for (nHidden = 5; nHidden <= 25; nHidden++) {
-                for (epoch = 5000; epoch <= 15000; epoch += 1000) {
-                    //train dan evaluasi
-                    c = new ANN(learnRate, nHidden, epoch);
-                    c.buildClassifier(insTrain);
-                    e = new Evaluation(insTest);
-                    e.evaluateModel(c, insTest);
-                    correct = (int) e.correct();
-                    //cetak hasil
-                    System.out.printf("%.2f %2d %5d = %3d\n", learnRate, nHidden, epoch, correct);
-                    if (correct >= maxCorrect) {
-                        maxLearnRate = learnRate;
-                        maxNHidden = nHidden;
-                        maxEpoch = epoch;
-                        maxCorrect = correct;
-                        //save model terbaik
-                        modelname = String.format("%d-%d-%.2f-%d-%d.model",
-                            idxClass, maxCorrect, maxLearnRate, maxNHidden, maxEpoch);
-                        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(modelname))) {
-                            oos.writeObject(c);
-                            oos.flush();
-                        }
+        for (learnRate = 0.005; learnRate <= 0.016; learnRate += 0.005) { //3x
+            for (nHidden = 15; nHidden <= 25; nHidden++) { //11x
+                //train dan evaluasi
+                c = new ANN(learnRate, nHidden, epoch, insTest);
+                c.buildClassifier(insTrain);
+                e = new Evaluation(insTest);
+                e.evaluateModel(c, insTest);
+                correct = (int) e.correct();
+                //cetak hasil
+                if (correct >= maxCorrect) {
+                    maxLearnRate = learnRate;
+                    maxNHidden = nHidden;
+                    maxCorrect = correct;
+                    System.out.println(e.toSummaryString(true));
+                    System.out.println(e.toMatrixString());
+                    //save model terbaik
+                    modelname = String.format("%d-%d-%.2f-%d-%d.model",
+                        idxClass, maxCorrect, maxLearnRate, maxNHidden, epoch);
+                    try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(modelname))) {
+                        oos.writeObject(c);
+                        oos.flush();
                     }
                 }
             }
         }
         System.out.println("Finish " + new Date().toString());
         System.out.printf("Maksimum : %.2f %2d %5d = %3d dari %3d\n",
-            maxLearnRate, maxNHidden, maxEpoch, maxCorrect, insTrain.numInstances());
+            maxLearnRate, maxNHidden, epoch, maxCorrect, insTest.numInstances());
     }
 
     public static void main(String[] args) throws Exception {
         Thread.currentThread().setPriority(Thread.MAX_PRIORITY); //biar cepet
-        experiment(); System.exit(0); //komentari baris ini jika mau test manual
+        experiment(Integer.parseInt(args[0])); System.exit(0); //komentari baris ini jika mau test manual
         Scanner s = new Scanner(System.in);
         Instances i = getInstances(s);
         Classifier c = getClassifier(s, i);

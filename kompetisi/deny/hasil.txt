@@ -463,4 +463,4 @@ Start Wed Nov 23 00:50:19 ICT 2016
 0.10 25 14000 = 200
 0.10 25 15000 = 200
 Finish Wed Nov 23 03:56:37 ICT 2016
-Maksimum : 0.05 24 11000 = 233 dari 649ssss
+Maksimum : 0.05 24 11000 = 233 dari 395

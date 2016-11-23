@@ -14,6 +14,14 @@ class Neuron implements Serializable {
         }
     }
 
+    public Neuron(Neuron n) {
+        sign = n.getSign();
+        error = n.getError();
+        nInput = n.getNInput();
+        weight = new double[nInput];
+        System.arraycopy(n.getWeight(), 0, weight, 0, nInput);
+    }
+
     private double activationF(double x) {
         return 1 / (1 + Math.pow(Math.E, -x)); //sigmoid
     }
@@ -54,5 +62,9 @@ class Neuron implements Serializable {
 
     public double[] getWeight() {
         return weight;
+    }
+
+    public int getNInput() {
+        return nInput;
     }
 }

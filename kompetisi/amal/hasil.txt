@@ -1,4 +1,3 @@
-run:
 Learning rate, number of hidden neuron, number of epoch = correct answer
 Start Wed Nov 23 02:56:30 ICT 2016
 0.20  5  5000 = 262
@@ -695,5 +694,4 @@ Start Wed Nov 23 02:56:30 ICT 2016
 0.30 25 14000 = 307
 0.30 25 15000 = 294
 Finish Wed Nov 23 06:06:17 ICT 2016
-Maksimum : 0.25 19 11000 = 317 dari 649
-BUILD SUCCESSFUL (total time: 189 minutes 47 seconds)
+Maksimum : 0.25 19 11000 = 317 dari 395
