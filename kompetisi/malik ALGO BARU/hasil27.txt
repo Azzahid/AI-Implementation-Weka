@@ -1,0 +1,246 @@
+Learning rate, number of hidden neuron, number of epoch = correct answer
+Start Wed Nov 23 20:09:59 ICT 2016
+0.01 15   500 = 199
+0.01 15  1000 = 206
+0.01 15  1500 = 208
+=== Summary ===
+
+Correctly Classified Instances         208               52.6582 %
+Incorrectly Classified Instances       187               47.3418 %
+Kappa statistic                          0.3421
+K&B Relative Info Score              16027.5558 %
+K&B Information Score                  341.5338 bits      0.8646 bits/instance
+Class complexity | order 0             839.7197 bits      2.1259 bits/instance
+Class complexity | scheme           200838      bits    508.4506 bits/instance
+Complexity improvement     (Sf)    -199998.2803 bits   -506.3248 bits/instance
+Mean absolute error                      0.1894
+Root mean squared error                  0.4352
+Relative absolute error                 63.5007 %
+Root relative squared error            112.7464 %
+Total Number of Instances              395     
+
+=== Confusion Matrix ===
+
+   a   b   c   d   e   <-- classified as
+ 122  14   9   4   2 |   a = 1
+  42  31   7   2   3 |   b = 2
+  41  12  14  11   2 |   c = 3
+   6   6   9  21   9 |   d = 4
+   0   2   0   6  20 |   e = 5
+
+0.01 16   500 = 190
+0.01 16  1500 = 197
+0.01 16  3000 = 202
+0.01 17   500 = 196
+0.01 17  1000 = 214
+0.01 17  1500 = 216
+=== Summary ===
+
+Correctly Classified Instances         216               54.6835 %
+Incorrectly Classified Instances       179               45.3165 %
+Kappa statistic                          0.3656
+K&B Relative Info Score              16608.6936 %
+K&B Information Score                  353.9174 bits      0.896  bits/instance
+Class complexity | order 0             839.7197 bits      2.1259 bits/instance
+Class complexity | scheme           192246      bits    486.6987 bits/instance
+Complexity improvement     (Sf)    -191406.2803 bits   -484.5729 bits/instance
+Mean absolute error                      0.1813
+Root mean squared error                  0.4258
+Relative absolute error                 60.7841 %
+Root relative squared error            110.3083 %
+Total Number of Instances              395     
+
+=== Confusion Matrix ===
+
+   a   b   c   d   e   <-- classified as
+ 129  11   4   5   2 |   a = 1
+  38  29   6  10   2 |   b = 2
+  39  14  15  10   2 |   c = 3
+   9   7   2  31   2 |   d = 4
+   5   1   0  10  12 |   e = 5
+
+0.01 18   500 = 194
+0.01 18  1500 = 205
+0.01 19   500 = 180
+0.01 19  1000 = 183
+0.01 19  1500 = 207
+0.01 19  2500 = 221
+0.01 19  3500 = 222
+=== Summary ===
+
+Correctly Classified Instances         222               56.2025 %
+Incorrectly Classified Instances       173               43.7975 %
+Kappa statistic                          0.4018
+K&B Relative Info Score              17782.0585 %
+K&B Information Score                  378.9208 bits      0.9593 bits/instance
+Class complexity | order 0             839.7197 bits      2.1259 bits/instance
+Class complexity | scheme           185802      bits    470.3848 bits/instance
+Complexity improvement     (Sf)    -184962.2803 bits   -468.2589 bits/instance
+Mean absolute error                      0.1752
+Root mean squared error                  0.4186
+Relative absolute error                 58.7466 %
+Root relative squared error            108.4438 %
+Total Number of Instances              395     
+
+=== Confusion Matrix ===
+
+   a   b   c   d   e   <-- classified as
+ 117  19   7   8   0 |   a = 1
+  33  34   8  10   0 |   b = 2
+  26  10  28  16   0 |   c = 3
+   5   4   9  27   6 |   d = 4
+   1   3   2   6  16 |   e = 5
+
+0.01 20   500 = 194
+0.01 20  1000 = 216
+0.01 20  1500 = 222
+0.01 20  3500 = 223
+0.01 20  4000 = 227
+0.01 20  4500 = 230
+0.01 20  5000 = 237
+=== Summary ===
+
+Correctly Classified Instances         237               60      %
+Incorrectly Classified Instances       158               40      %
+Kappa statistic                          0.4492
+K&B Relative Info Score              19147.7036 %
+K&B Information Score                  408.0216 bits      1.033  bits/instance
+Class complexity | order 0             839.7197 bits      2.1259 bits/instance
+Class complexity | scheme           169692      bits    429.6    bits/instance
+Complexity improvement     (Sf)    -168852.2803 bits   -427.4741 bits/instance
+Mean absolute error                      0.16  
+Root mean squared error                  0.4   
+Relative absolute error                 53.653  %
+Root relative squared error            103.6359 %
+Total Number of Instances              395     
+
+=== Confusion Matrix ===
+
+   a   b   c   d   e   <-- classified as
+ 119  18  11   2   1 |   a = 1
+  25  48   7   4   1 |   b = 2
+  18  15  36  10   1 |   c = 3
+  15   5   6  23   2 |   d = 4
+   4   2   4   7  11 |   e = 5
+
+0.01 21   500 = 189
+0.01 21  1000 = 194
+0.01 21  1500 = 205
+0.01 21  2500 = 209
+0.01 21  3500 = 213
+0.01 21  5500 = 218
+0.01 21  6000 = 224
+0.01 22   500 = 173
+0.01 22  1000 = 200
+0.01 22  2000 = 205
+0.01 22  3000 = 215
+0.01 23   500 = 180
+0.01 23  1000 = 199
+0.01 23  1500 = 202
+0.01 23  2000 = 220
+0.01 23  2500 = 229
+0.01 24   500 = 179
+0.01 24  1000 = 195
+0.01 24  1500 = 202
+0.01 24  2000 = 209
+0.01 24  3000 = 214
+0.01 24  6500 = 216
+0.01 24  8000 = 218
+0.01 25   500 = 186
+0.01 25  1000 = 200
+0.01 25  1500 = 210
+0.01 25  2000 = 213
+0.01 25  3000 = 216
+0.01 25  3500 = 222
+0.01 25  4000 = 226
+0.01 25  4500 = 237
+0.01 25  8000 = 241
+0.01 25  9000 = 244
+=== Summary ===
+
+Correctly Classified Instances         244               61.7722 %
+Incorrectly Classified Instances       151               38.2278 %
+Kappa statistic                          0.4767
+K&B Relative Info Score              20357.4772 %
+K&B Information Score                  433.8008 bits      1.0982 bits/instance
+Class complexity | order 0             839.7197 bits      2.1259 bits/instance
+Class complexity | scheme           162174      bits    410.5671 bits/instance
+Complexity improvement     (Sf)    -161334.2803 bits   -408.4412 bits/instance
+Mean absolute error                      0.1529
+Root mean squared error                  0.391 
+Relative absolute error                 51.276  %
+Root relative squared error            101.3142 %
+Total Number of Instances              395     
+
+=== Confusion Matrix ===
+
+   a   b   c   d   e   <-- classified as
+ 125  10   8   8   0 |   a = 1
+  36  33  11   2   3 |   b = 2
+  15  17  39   9   0 |   c = 3
+   3   7   5  32   4 |   d = 4
+   2   4   2   5  15 |   e = 5
+
+0.01 15   500 = 188
+0.01 15  1000 = 205
+0.01 15  2500 = 215
+0.01 16   500 = 210
+0.01 17   500 = 188
+0.01 17  1000 = 202
+0.01 17  1500 = 208
+0.01 17  3000 = 214
+0.01 17  4000 = 219
+0.01 18   500 = 207
+0.01 18  1000 = 223
+0.01 18  1500 = 228
+0.01 18  3000 = 229
+0.01 18  3500 = 232
+0.01 19   500 = 207
+0.01 20   500 = 205
+0.01 20  6500 = 208
+0.01 21   500 = 204
+0.01 21  1000 = 216
+0.01 21  1500 = 219
+0.01 21  2000 = 236
+0.01 22   500 = 192
+0.01 22  1000 = 218
+0.01 23   500 = 212
+0.01 23  1000 = 224
+0.01 23  2000 = 231
+0.01 24   500 = 205
+0.01 24  1000 = 222
+0.01 25   500 = 201
+0.01 25  1000 = 206
+0.01 25  1500 = 208
+0.01 25  2500 = 211
+0.01 25  3000 = 212
+0.02 15   500 = 223
+0.02 16   500 = 183
+0.02 16  1000 = 198
+0.02 16  2000 = 204
+0.02 17   500 = 206
+0.02 17  2000 = 209
+0.02 18   500 = 208
+0.02 18  2000 = 209
+0.02 18  2500 = 216
+0.02 19   500 = 208
+0.02 19  1000 = 233
+0.02 19  1500 = 238
+0.02 20   500 = 226
+0.02 21   500 = 205
+0.02 21  1500 = 217
+0.02 21  2000 = 218
+0.02 21  6500 = 219
+0.02 22   500 = 211
+0.02 22  1000 = 219
+0.02 23   500 = 209
+0.02 23  3500 = 210
+0.02 23  4000 = 211
+0.02 24   500 = 203
+0.02 24  1000 = 210
+0.02 24  1500 = 237
+0.02 25   500 = 218
+0.02 25  1500 = 234
+0.02 25 10000 = 235
+Finish Wed Nov 23 20:47:27 ICT 2016
+Maksimum : 0.01 25 25000 = 244 dari 395
