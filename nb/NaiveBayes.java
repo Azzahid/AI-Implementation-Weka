@@ -18,7 +18,7 @@ import weka.core.Instance;
 import weka.core.Instances;
 import weka.core.converters.ConverterUtils.DataSource;
 import weka.filters.Filter;
-import weka.filters.supervised.attribute.Discretize;
+import weka.filters.unsupervised.attribute.Discretize;
 import weka.filters.unsupervised.attribute.NumericToNominal;
 
 /**
